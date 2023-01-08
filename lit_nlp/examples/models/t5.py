@@ -1,6 +1,6 @@
 """LIT wrappers for T5, supporting both HuggingFace and SavedModel formats."""
 import re
-from typing import List
+from typing import List, Tuple
 
 import attr
 from lit_nlp.api import model as lit_model
@@ -162,14 +162,14 @@ class T5HFModel(lit_model.Model):
     Each forward pass produces the following:
       logits: batch_size x dec_len x vocab_size
       decoder_past_key_value_states: tuple with cached outputs.
-      dec_states: tuple[len:dec_layers]:
+      dec_states: Tuple[len:dec_layers]:
                   batch_size x dec_len x hid_size
-      dec_attn: [optional] tuple[len:dec_layers+1]
+      dec_attn: [optional] Tuple[len:dec_layers+1]
                 batch_size x num_heads x dec_len x dec_len
       enc_final_state: batch_size x enc_len x hid_size
-      enc_states: tuple[len:enc_layers]:
+      enc_states: Tuple[len:enc_layers]:
                   batch_size x enc_len x hid_size
-      enc_attn: [optional] tuple[len:enc_layers+1]
+      enc_attn: [optional] Tuple[len:enc_layers+1]
                 batch_size x num_heads x enc_len x enc_len
 
     The two optional attention fields are only returned if

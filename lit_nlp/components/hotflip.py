@@ -35,7 +35,7 @@ This generator extends ideas from the following papers.
 
 import copy
 import itertools
-from typing import cast, Iterator, Optional, Type
+from typing import cast, Iterator, List, Optional, Tuple, Type
 
 from absl import logging
 from lit_nlp.api import components as lit_components
@@ -125,7 +125,7 @@ class HotFlip(lit_components.Generator):
   def find_fields(self,
                   spec: Spec,
                   typ: Type[types.LitType],
-                  align_field: Optional[str] = None) -> list[str]:
+                  align_field: Optional[str] = None) -> List[str]:
     # Find fields of provided 'typ'.
     fields = utils.find_spec_keys(spec, typ)
 
@@ -139,7 +139,7 @@ class HotFlip(lit_components.Generator):
 
   def _get_tokens_and_gradients(self, input_spec: JsonDict,
                                 output_spec: JsonDict, output: JsonDict,
-                                selected_fields: list[str]):
+                                selected_fields: List[str]):
     """Returns a dictionary mapping token fields to tokens and gradients."""
     # Find selected token fields.
     input_spec_keys = set(utils.find_spec_keys(input_spec, types.Tokens))
@@ -193,8 +193,8 @@ class HotFlip(lit_components.Generator):
     return False
 
   def _gen_token_idxs_to_flip(
-      self, tokens: list[str], token_grads: np.ndarray, max_flips: int,
-      tokens_to_ignore: list[str]) -> Iterator[tuple[int, ...]]:
+      self, tokens: List[str], token_grads: np.ndarray, max_flips: int,
+      tokens_to_ignore: List[str]) -> Iterator[Tuple[int, ...]]:
     """Generates sets of token positions that are eligible for flipping."""
     # Consider all combinations of tokens upto length max_flips.
     # We will iterate through this list (sortted by cardinality) and at each
@@ -218,16 +218,16 @@ class HotFlip(lit_components.Generator):
       for s in itertools.combinations(token_idxs_to_flip, i+1):
         yield s
 
-  def _flip_tokens(self, tokens: list[str], token_idxs: tuple[int, ...],
-                   replacement_tokens: list[str]) -> list[str]:
+  def _flip_tokens(self, tokens: List[str], token_idxs: Tuple[int, ...],
+                   replacement_tokens: List[str]) -> List[str]:
     """Perturbs tokens at the indices specified in 'token_idxs'."""
     modified_tokens = [replacement_tokens[j] if j in token_idxs else t
                        for j, t in enumerate(tokens)]
     return modified_tokens
 
   def _create_cf(self, example: JsonDict, token_field: str, text_field: str,
-                 tokens: list[str], token_idxs: tuple[int, ...],
-                 replacement_tokens: list[str]) -> JsonDict:
+                 tokens: List[str], token_idxs: Tuple[int, ...],
+                 replacement_tokens: List[str]) -> JsonDict:
     cf = copy.deepcopy(example)
     modified_tokens = self._flip_tokens(
         tokens, token_idxs, replacement_tokens)
@@ -241,10 +241,10 @@ class HotFlip(lit_components.Generator):
 
   def _get_replacement_tokens(self,
                               embedding_matrix: np.ndarray,
-                              inv_vocab: list[str],
+                              inv_vocab: List[str],
                               token_grads: np.ndarray,
                               orig_output: JsonDict,
-                              direction: int = -1) -> list[str]:
+                              direction: int = -1) -> List[str]:
     """Identifies replacement tokens for each token position."""
     token_grads = token_grads * direction
     # Compute dot product of each input token gradient with the embedding
@@ -262,7 +262,7 @@ class HotFlip(lit_components.Generator):
                example: JsonDict,
                model: lit_model.Model,
                dataset: lit_dataset.Dataset,
-               config: Optional[JsonDict] = None) -> list[JsonDict]:
+               config: Optional[JsonDict] = None) -> List[JsonDict]:
     """Identify minimal sets of token flips that alter the prediction."""
     del dataset  # Unused.
 

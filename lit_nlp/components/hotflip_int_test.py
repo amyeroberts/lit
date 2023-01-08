@@ -14,12 +14,15 @@
 # ==============================================================================
 """Tests for lit_nlp.components.hotflip."""
 
+from typing import List
+
+import numpy as np
+
 from absl.testing import absltest
 from absl.testing import parameterized
 from lit_nlp.components import hotflip
 # TODO(lit-dev): Move glue_models out of lit_nlp/examples
 from lit_nlp.examples.models import glue_models
-import numpy as np
 
 
 BERT_TINY_PATH = 'https://storage.googleapis.com/what-if-tool-resources/lit-models/sst2_tiny.tar.gz'  # pylint: disable=line-too-long
@@ -86,8 +89,8 @@ class HotflipIntegrationTest(parameterized.TestCase):
       ('terrible', ['terrible'], [4]),
       ('long_terrible', ['long', 'terrible'], [1, 4]),
   )
-  def test_hotflip_freeze_tokens(self, ignore: list[str],
-                                 exp_indexes: list[int]):
+  def test_hotflip_freeze_tokens(self, ignore: List[str],
+                                 exp_indexes: List[int]):
     config = {
         **_CONFIG_CLASSIFICATION,
         hotflip.NUM_EXAMPLES_KEY: 10,

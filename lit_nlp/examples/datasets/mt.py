@@ -1,6 +1,6 @@
 """Machine translation datasets."""
 
-from typing import Any, Mapping, Optional
+from typing import Any, Mapping, List, Optional
 
 from lit_nlp.api import dataset as lit_dataset
 from lit_nlp.api import types as lit_types
@@ -75,7 +75,7 @@ class WMT14Data(lit_dataset.Dataset):
                        path: str,
                        source_key: str,
                        target_key: str,
-                       skiplines: int = 0) -> list[JsonDict]:
+                       skiplines: int = 0) -> List[JsonDict]:
     """Loads the dataset from a CSV file.
 
     Args:

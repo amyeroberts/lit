@@ -28,16 +28,16 @@ import abc
 import enum
 import math
 import numbers
-from typing import Any, NewType, Optional, Sequence, Type, TypedDict, Union
+from typing import Any, Dict, List, NewType, Optional, Sequence, Tuple, Type, TypedDict, Union
 
 import attr
 from lit_nlp.api import dtypes
 import numpy as np
 
-JsonDict = dict[str, Any]
+JsonDict = Dict[str, Any]
 Input = NewType("Input", JsonDict)
 ExampleId = NewType("ExampleId", str)
-ScoredTextCandidates = Sequence[tuple[str, Optional[float]]]
+ScoredTextCandidates = Sequence[Tuple[str, Optional[float]]]
 TokenTopKPredsList = Sequence[ScoredTextCandidates]
 NumericTypes = numbers.Number
 
@@ -155,14 +155,14 @@ class LitType(metaclass=abc.ABCMeta):
 
     return cls(**d)
 
-Spec = dict[str, LitType]
+Spec = Dict[str, LitType]
 
 # Attributes that should be treated as a reference to other fields.
 FIELD_REF_ATTRIBUTES = frozenset(
     {"parent", "align", "align_in", "align_out", "grad_for"})
 
 
-def _remap_leaf(leaf: LitType, keymap: dict[str, str]) -> LitType:
+def _remap_leaf(leaf: LitType, keymap: Dict[str, str]) -> LitType:
   """Remap any field references on a LitType."""
   d = attr.asdict(leaf)  # mutable
   d = {
@@ -172,7 +172,7 @@ def _remap_leaf(leaf: LitType, keymap: dict[str, str]) -> LitType:
   return leaf.__class__(**d)
 
 
-def remap_spec(spec: Spec, keymap: dict[str, str]) -> Spec:
+def remap_spec(spec: Spec, keymap: Dict[str, str]) -> Spec:
   """Rename fields in a spec, with a best-effort to also remap field references."""
   ret = {}
   for k, v in spec.items():
@@ -482,7 +482,7 @@ class _Tensor(LitType):
     else:
       raise ValueError(f"{value} is not a list or ndarray of numbers")
 
-  def validate_ndim(self, value, ndim: Union[int, list[int]]):
+  def validate_ndim(self, value, ndim: Union[int, List[int]]):
     """Validate the number of dimensions in a tensor.
 
     Args:

@@ -14,6 +14,8 @@
 # ==============================================================================
 """Tests for lit_nlp.components.gradient_maps."""
 
+from typing import List
+
 from absl.testing import absltest
 from lit_nlp.api import dataset as lit_dataset
 from lit_nlp.api import model as lit_model
@@ -34,7 +36,7 @@ class ClassificationTestModel(lit_model.Model):
   def max_minibatch_size(self) -> int:
     return 10
 
-  def predict_minibatch(self, inputs: list[JsonDict]) -> list[JsonDict]:
+  def predict_minibatch(self, inputs: List[JsonDict]) -> List[JsonDict]:
     result = []
     for i, _ in enumerate(inputs):
       result.append({
@@ -70,7 +72,7 @@ class RegressionTestModel(lit_model.Model):
   def max_minibatch_size(self) -> int:
     return 10
 
-  def predict_minibatch(self, inputs: list[JsonDict]) -> list[JsonDict]:
+  def predict_minibatch(self, inputs: List[JsonDict]) -> List[JsonDict]:
     """Simulates regression of x1 + 2 * x2 using elements of the image array."""
     result = []
     for example in inputs:

@@ -16,7 +16,7 @@
 
 import copy
 import functools
-from typing import Any, Iterable, Optional
+from typing import Any, Iterable, List, Optional
 
 from absl import logging
 from lit_nlp.api import components as lit_components
@@ -166,12 +166,12 @@ class LIME(lit_components.Interpreter):
 
   def run(
       self,
-      inputs: list[JsonDict],
+      inputs: List[JsonDict],
       model: lit_model.Model,
       dataset: lit_dataset.Dataset,
-      model_outputs: Optional[list[JsonDict]] = None,
+      model_outputs: Optional[List[JsonDict]] = None,
       config: Optional[JsonDict] = None,
-  ) -> Optional[list[JsonDict]]:
+  ) -> Optional[List[JsonDict]]:
     """Run this component, given a model and input(s)."""
     config_defaults = {k: v.default for k, v in self.config_spec().items()}
     config = dict(config_defaults, **(config or {}))  # update and return

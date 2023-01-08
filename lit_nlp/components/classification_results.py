@@ -15,7 +15,7 @@
 """An interpreter for analyzing classification results."""
 
 import numbers
-from typing import cast, Optional, Sequence
+from typing import cast, Dict, List, Optional, Sequence
 
 from lit_nlp.api import components as lit_components
 from lit_nlp.api import dataset as lit_dataset
@@ -91,24 +91,24 @@ class ClassificationInterpreter(lit_components.Interpreter):
 
   def run(  # pytype: disable=signature-mismatch  # overriding-parameter-type-checks
       self,
-      inputs: list[JsonDict],
+      inputs: List[JsonDict],
       model: lit_model.Model,
       dataset: lit_dataset.IndexedDataset,
-      model_outputs: Optional[list[JsonDict]] = None,
+      model_outputs: Optional[List[JsonDict]] = None,
       config: Optional[JsonDict] = None):
 
     # Find the prediction field key in the model output to use for calculations.
     output_spec = model.output_spec()
     supported_keys = self._find_supported_pred_keys(output_spec)
 
-    results: list[dict[str, dtypes.ClassificationResult]] = []
+    results: List[Dict[str, dtypes.ClassificationResult]] = []
 
     # Run prediction if needed:
     if model_outputs is None:
       model_outputs = list(model.predict(inputs))
 
     for i, inp in enumerate(inputs):
-      input_result: dict[str, dtypes.ClassificationResult] = {}
+      input_result: Dict[str, dtypes.ClassificationResult] = {}
       for key in supported_keys:
 
         margin = get_margin_for_input(
@@ -134,5 +134,5 @@ class ClassificationInterpreter(lit_components.Interpreter):
     del dataset  # Unused during model classification
     return lit_utils.spec_contains(model.output_spec(), types.MulticlassPreds)
 
-  def _find_supported_pred_keys(self, output_spec: types.Spec) -> list[str]:
+  def _find_supported_pred_keys(self, output_spec: types.Spec) -> List[str]:
     return lit_utils.find_spec_keys(output_spec, types.MulticlassPreds)

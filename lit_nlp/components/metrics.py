@@ -15,7 +15,7 @@
 """Metric component and implementations."""
 
 import collections
-from typing import Any, Callable, Optional, Sequence, Union, cast
+from typing import Any, Dict, Callable, List, Optional, Sequence, Tuple, Union, cast
 
 from absl import logging
 from lit_nlp.api import components as lit_components
@@ -39,7 +39,7 @@ Spec = types.Spec
 
 def map_pred_keys(
     data_spec: Spec, model_output_spec: Spec,
-    predicate: Callable[[LitType, Optional[LitType]], bool]) -> dict[str, str]:
+    predicate: Callable[[LitType, Optional[LitType]], bool]) -> Dict[str, str]:
   """Returns a map of compatible output fields and their parent input fields."""
   ret = {}
   for pred_key, pred_spec in model_output_spec.items():
@@ -58,7 +58,7 @@ def map_pred_keys(
   return ret
 
 
-def nan_to_none(metrics: dict[str, float]) -> dict[str, Optional[float]]:
+def nan_to_none(metrics: Dict[str, float]) -> Dict[str, Optional[float]]:
   # NaN is not a valid JSON value, so replace with None which will be
   # serialized as null.
   # TODO(lit-dev): consider moving this logic to serialize.py?
@@ -72,7 +72,7 @@ class SimpleMetrics(lit_components.Metrics):
           inputs: Sequence[JsonDict],
           model: lit_model.Model,
           dataset: lit_dataset.Dataset,
-          model_outputs: Optional[list[JsonDict]] = None,
+          model_outputs: Optional[List[JsonDict]] = None,
           config: Optional[JsonDict] = None):
     if model_outputs is None:
       model_outputs = list(model.predict(inputs))
@@ -104,8 +104,8 @@ class SimpleMetrics(lit_components.Metrics):
                         indexed_inputs: Sequence[IndexedInput],
                         model: lit_model.Model,
                         dataset: lit_dataset.IndexedDataset,
-                        model_outputs: Optional[list[JsonDict]] = None,
-                        config: Optional[JsonDict] = None) -> list[JsonDict]:
+                        model_outputs: Optional[List[JsonDict]] = None,
+                        config: Optional[JsonDict] = None) -> List[JsonDict]:
     if model_outputs is None:
       model_outputs = list(model.predict_with_metadata(indexed_inputs))
 
@@ -162,14 +162,14 @@ class ClassificationMetricsWrapper(lit_components.Interpreter):
     """Return true if compatible with this field."""
     return self._metrics.is_field_compatible(pred_spec, parent_spec)
 
-  def meta_spec(self) -> dict[str, types.LitType]:
+  def meta_spec(self) -> Dict[str, types.LitType]:
     return self._metrics.meta_spec()
 
   def run(self,
-          inputs: list[JsonDict],
+          inputs: List[JsonDict],
           model: lit_model.Model,
           dataset: lit_dataset.Dataset,
-          model_outputs: Optional[list[JsonDict]] = None,
+          model_outputs: Optional[List[JsonDict]] = None,
           config: Optional[JsonDict] = None):
     # Get margin for each input for each pred key and add them to a config dict
     # to pass to the wrapped metrics.
@@ -190,8 +190,8 @@ class ClassificationMetricsWrapper(lit_components.Interpreter):
                         indexed_inputs: Sequence[IndexedInput],
                         model: lit_model.Model,
                         dataset: lit_dataset.IndexedDataset,
-                        model_outputs: Optional[list[JsonDict]] = None,
-                        config: Optional[JsonDict] = None) -> list[JsonDict]:
+                        model_outputs: Optional[List[JsonDict]] = None,
+                        config: Optional[JsonDict] = None) -> List[JsonDict]:
     # Get margin for each input for each pred key and add them to a config dict
     # to pass to the wrapped metrics.
     field_map = map_pred_keys(dataset.spec(),
@@ -218,7 +218,7 @@ class RegressionMetrics(SimpleMetrics):
     del parent_spec
     return isinstance(pred_spec, types.RegressionScore)
 
-  def meta_spec(self) -> dict[str, types.LitType]:
+  def meta_spec(self) -> Dict[str, types.LitType]:
     return {
         'mse': types.MetricResult(
             best_value=types.MetricBestValue.ZERO,
@@ -243,7 +243,7 @@ class RegressionMetrics(SimpleMetrics):
               preds: Sequence[float],
               label_spec: LitType,
               pred_spec: LitType,
-              config: Optional[JsonDict] = None) -> dict[str, float]:
+              config: Optional[JsonDict] = None) -> Dict[str, float]:
     """Compute the MSE and Pearson's & Spearman's R for regression predictions.
 
     Args:
@@ -315,7 +315,7 @@ class MulticlassMetricsImpl(SimpleMetrics):
     # null_idx as the negative / "other" class.
     if null_idx is not None:
       # Note: labels here are indices.
-      labels: list[int] = [
+      labels: List[int] = [
           i for i in range(len(pred_spec.vocab)) if i != null_idx
       ]
       ret['precision'] = sklearn_metrics.precision_score(
@@ -350,7 +350,7 @@ class MulticlassMetricsImpl(SimpleMetrics):
     del parent_spec
     return isinstance(pred_spec, types.MulticlassPreds)
 
-  def meta_spec(self) -> dict[str, types.LitType]:
+  def meta_spec(self) -> Dict[str, types.LitType]:
     return {
         'accuracy': types.MetricResult(
             best_value=types.MetricBestValue.HIGHEST,
@@ -387,7 +387,7 @@ class MulticlassMetricsImpl(SimpleMetrics):
               preds: Sequence[np.ndarray],
               label_spec: LitType,
               pred_spec: LitType,
-              config: Optional[JsonDict] = None) -> dict[str, float]:
+              config: Optional[JsonDict] = None) -> Dict[str, float]:
     """Compute standard metrics for multiclass predictions.
 
     Args:
@@ -469,7 +469,7 @@ class MulticlassPairedMetricsImpl(SimpleMetrics):
 
   @staticmethod
   def find_pairs(indices: Sequence[types.ExampleId],
-                 metas: Sequence[JsonDict]) -> list[tuple[int, int]]:
+                 metas: Sequence[JsonDict]) -> List[Tuple[int, int]]:
     """Find valid pairs in the current selection, and return list indices."""
     id_to_position = {example_id: i for i, example_id in enumerate(indices)}
     pairs = []  # (i,j) relative to labels and preds lists
@@ -490,7 +490,7 @@ class MulticlassPairedMetricsImpl(SimpleMetrics):
       pred_spec: LitType,
       indices: Sequence[types.ExampleId],
       metas: Sequence[JsonDict],
-      config: Optional[JsonDict] = None) -> dict[str, float]:
+      config: Optional[JsonDict] = None) -> Dict[str, float]:
     """Compute standard paired metrics for multiclass predictions.
 
     Args:
@@ -561,7 +561,7 @@ class CorpusBLEU(SimpleMetrics):
     is_parent_compatible = isinstance(parent_spec, types.StringLitType)
     return is_pred_comaptible and is_parent_compatible
 
-  def meta_spec(self) -> dict[str, types.LitType]:
+  def meta_spec(self) -> Dict[str, types.LitType]:
     return {
         'corpus_bleu': types.MetricResult(
             best_value=types.MetricBestValue.HIGHEST,
@@ -579,7 +579,7 @@ class CorpusBLEU(SimpleMetrics):
               preds: Sequence[Union[str, types.ScoredTextCandidates]],
               label_spec: LitType,
               pred_spec: LitType,
-              config: Optional[JsonDict] = None) -> dict[str, float]:
+              config: Optional[JsonDict] = None) -> Dict[str, float]:
     """Compute CorpusBLEU score using the SacreBLEU library.
 
     Args:
@@ -642,7 +642,7 @@ class RougeL(SimpleMetrics):
     is_parent_compatible = isinstance(parent_spec, types.StringLitType)
     return is_pred_comaptible and is_parent_compatible
 
-  def meta_spec(self) -> dict[str, types.LitType]:
+  def meta_spec(self) -> Dict[str, types.LitType]:
     return {
         'rougeL': types.MetricResult(
             best_value=types.MetricBestValue.HIGHEST,
@@ -661,7 +661,7 @@ class RougeL(SimpleMetrics):
               preds: Sequence[Union[str, types.ScoredTextCandidates]],
               label_spec: LitType,
               pred_spec: LitType,
-              config: Optional[JsonDict] = None) -> dict[str, float]:
+              config: Optional[JsonDict] = None) -> Dict[str, float]:
     """Compute the RougeL score using the RougeScorer library.
 
     Args:
@@ -729,7 +729,7 @@ class BinaryConfusionMetricsImpl(SimpleMetrics):
     ret['TP'] = matrix[1][1]
     return ret
 
-  def meta_spec(self) -> dict[str, types.LitType]:
+  def meta_spec(self) -> Dict[str, types.LitType]:
     return {
         'FN': types.MetricResult(
             best_value=types.MetricBestValue.ZERO,
@@ -763,7 +763,7 @@ class BinaryConfusionMetricsImpl(SimpleMetrics):
               preds: Sequence[np.ndarray],
               label_spec: LitType,
               pred_spec: LitType,
-              config: Optional[JsonDict] = None) -> dict[str, float]:
+              config: Optional[JsonDict] = None) -> Dict[str, float]:
     """Compute binary classification metrics using Scikit-Learn.
 
     Args:

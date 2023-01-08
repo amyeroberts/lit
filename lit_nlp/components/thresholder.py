@@ -15,7 +15,7 @@
 """Threshold setter for binary classifiers."""
 
 import math
-from typing import Optional, Sequence, cast
+from typing import List, Optional, Sequence, cast
 
 import attr
 from lit_nlp.api import components as lit_components
@@ -175,8 +175,8 @@ class Thresholder(lit_components.Interpreter):
       indexed_inputs: Sequence[IndexedInput],
       model: lit_model.Model,
       dataset: lit_dataset.IndexedDataset,
-      model_outputs: Optional[list[JsonDict]] = None,
-      config: Optional[JsonDict] = None) -> Optional[list[JsonDict]]:
+      model_outputs: Optional[List[JsonDict]] = None,
+      config: Optional[JsonDict] = None) -> Optional[List[JsonDict]]:
     """Calculates optimal thresholds on the provided data.
 
     Args:

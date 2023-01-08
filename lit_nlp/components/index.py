@@ -223,7 +223,7 @@ class Indexer(object):
       num_neighbors: How many neighbors we should return.
 
     Returns:
-      neighbors: A list[dict] with nearest neighbor examples.
+      neighbors: A List[dict] with nearest neighbor examples.
     """
     index_key = self._get_index_key(model_name, dataset_name, embedding_name)
     index = self._indices.get(index_key)

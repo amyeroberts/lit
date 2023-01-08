@@ -19,7 +19,7 @@ import hashlib
 import os
 import pickle
 import threading
-from typing import Any, Callable, Iterable, Optional, Union
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 
 from absl import logging
 
@@ -35,7 +35,7 @@ ProgressIndicator = Callable[[Iterable], Iterable]
 
 # Compound keys: (dataset_name, example_id)
 # None is used as a sentinel to skip the cache.
-CacheKey = Union[tuple[str, str], None]
+CacheKey = Union[Tuple[str, str], None]
 
 # The keys to the prediction locks are frozen sets of CacheKeys.
 PredLockKey = frozenset[CacheKey]
@@ -58,11 +58,11 @@ class PickleCacheLoader(object):
   def __init__(self, name: str, cache_dir: str):
     self._cache_path = os.path.join(cache_dir, name + ".cache.pkl")
 
-  def save(self, data: dict[CacheKey, Any]):
+  def save(self, data: Dict[CacheKey, Any]):
     with open(self._cache_path, "wb") as fd:
       pickle.dump(data, fd)
 
-  def load(self) -> dict[CacheKey, Any]:
+  def load(self) -> Dict[CacheKey, Any]:
     """Load data from pickle file."""
     try:
       with open(self._cache_path, "rb") as fd:
@@ -89,7 +89,7 @@ class PredsCache(object):
     # TODO(lit-team): consider using a read/write lock, or setting timeouts if
     # contention becomes an issue.
     self._lock = threading.RLock()
-    self._d: dict[CacheKey, Any] = dict()
+    self._d: Dict[CacheKey, Any] = dict()
     self._num_persisted = 0
     self._allow_concurrent_predictions = allow_concurrent_predictions
 
@@ -100,7 +100,7 @@ class PredsCache(object):
 
     # A map of keys needing predictions to a lock for that model predict call.
     # Used for not duplicating concurrent prediction calls on the same inputs.
-    self._pred_locks: dict[frozenset[CacheKey], threading.RLock] = dict()
+    self._pred_locks: Dict[frozenset[CacheKey], threading.RLock] = dict()
 
   @property
   def lock(self):
@@ -122,14 +122,14 @@ class PredsCache(object):
     """Print some info, for logging."""
     return str(len(self._d))
 
-  def _construct_pred_lock_key(self, keys: list[CacheKey]) -> PredLockKey:
+  def _construct_pred_lock_key(self, keys: List[CacheKey]) -> PredLockKey:
     # If this cache is set up to not allow concurrent predictions, then use the
     # same key to the predictions lock map regardless of example keys provided.
     fs = frozenset(keys) if self._allow_concurrent_predictions else frozenset(
         [PRED_LOCK_KEY_WHEN_NO_CONCURRENT_ACCESS])
     return fs
 
-  def pred_lock_key(self, keys: list[CacheKey]) -> Optional[PredLockKey]:
+  def pred_lock_key(self, keys: List[CacheKey]) -> Optional[PredLockKey]:
     """Get the key for the predictions lock for the provided cache keys."""
     fs = self._construct_pred_lock_key(keys)
 
@@ -152,7 +152,7 @@ class PredsCache(object):
     # keys.
     return None
 
-  def get_pred_lock(self, keys: list[CacheKey]) -> threading.RLock:
+  def get_pred_lock(self, keys: List[CacheKey]) -> threading.RLock:
     """Gets the lock for the provided cache keys, creating one if neccessary."""
     # If the lock already exists for the provided keys, return it.
     pl_key = self.pred_lock_key(keys)
@@ -163,7 +163,7 @@ class PredsCache(object):
     self._pred_locks[self._construct_pred_lock_key(keys)] = pred_lock
     return pred_lock
 
-  def delete_pred_lock(self, keys: list[CacheKey]) -> Optional[threading.RLock]:
+  def delete_pred_lock(self, keys: List[CacheKey]) -> Optional[threading.RLock]:
     """Remove the lock from the map to clean up, returns it."""
     pl_key = self.pred_lock_key(keys)
     if pl_key is None:
@@ -231,7 +231,7 @@ class CachingModelWrapper(lit_model.ModelWrapper):
   ##
   # For internal use
   def fit_transform_with_metadata(self,
-                                  indexed_inputs: list[JsonDict],
+                                  indexed_inputs: List[JsonDict],
                                   dataset_name: str = ""):
     """For use with UMAP and other preprocessing transforms."""
     outputs = list(self.wrapped.fit_transform_with_metadata(indexed_inputs))
@@ -260,16 +260,16 @@ class CachingModelWrapper(lit_model.ModelWrapper):
     results = self._predict_with_metadata(*args, **kw)
     return results
 
-  def _get_results_from_cache(self, input_keys: list[str]):
+  def _get_results_from_cache(self, input_keys: List[str]):
     with self._cache.lock:
       return [self._cache.get(input_key) for input_key in input_keys]
 
   def _predict_with_metadata(
       self,
-      indexed_inputs: list[JsonDict],
+      indexed_inputs: List[JsonDict],
       dataset_name: Optional[str] = None,
       progress_indicator: Optional[ProgressIndicator] = lambda x: x,
-      **kw) -> list[JsonDict]:
+      **kw) -> List[JsonDict]:
     """As predict(), but inputs are IndexedInput."""
     # TODO(lit-dev): consider moving this to example level
     # (null keys skip cache), and removing this codepath.

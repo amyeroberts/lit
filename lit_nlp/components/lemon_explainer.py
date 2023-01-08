@@ -15,7 +15,7 @@
 """Counterfactual explanations using linear model."""
 
 import copy
-from typing import Any, Optional, Sequence, Iterable
+from typing import Any, Dict, List, Optional, Sequence, Iterable
 
 from absl import logging
 from lit_nlp.api import components as lit_components
@@ -41,7 +41,7 @@ def new_example(original_example: JsonDict, field: str, new_value: Any):
 
 # TODO(lit-dev): Change to calling the CachingModelWrapper for predictions
 # instead of using a Dict with the prediction values.
-def make_predict_fn(counterfactuals: dict[str, Sequence[float]]):
+def make_predict_fn(counterfactuals: Dict[str, Sequence[float]]):
   """Makes a predict function that returns pre-computed predictions.
 
   Since LIT already has cached predictions for the counterfactuals, this mapping
@@ -73,11 +73,11 @@ class LEMON(lit_components.Interpreter):
     return utils.spec_contains(model.input_spec(), types.TextSegment)
 
   def run(self,
-          inputs: list[JsonDict],
+          inputs: List[JsonDict],
           model: lit_model.Model,
           dataset: lit_dataset.Dataset,
-          model_outputs: Optional[list[JsonDict]] = None,
-          config: Optional[JsonDict] = None) -> Optional[list[JsonDict]]:
+          model_outputs: Optional[List[JsonDict]] = None,
+          config: Optional[JsonDict] = None) -> Optional[List[JsonDict]]:
     """Run this component, given a model and input(s)."""
     if not (inputs and config):
       return None
