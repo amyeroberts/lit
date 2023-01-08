@@ -15,7 +15,7 @@
 """Helper classes and functions for explaining text classifiers."""
 
 import math
-from typing import Any, Optional, Sequence
+from typing import Any, List, Optional, Sequence
 import attr
 import numpy as np
 
@@ -58,7 +58,7 @@ class TextRationale:
 
   def __init__(self,
                text: str,
-               token_weights: list[float],
+               token_weights: List[float],
                top_k_ratio: float = TOP_K_AVG_RATIO):
     """Initializes with a text and a list of token weights.
 

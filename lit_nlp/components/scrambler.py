@@ -16,7 +16,7 @@
 
 import copy
 import random
-from typing import Optional
+from typing import Optional, List
 
 from lit_nlp.api import components as lit_components
 from lit_nlp.api import dataset as lit_dataset
@@ -56,7 +56,7 @@ class Scrambler(lit_components.Generator):
                example: JsonDict,
                model: lit_model.Model,
                dataset: lit_dataset.Dataset,
-               config: Optional[JsonDict] = None) -> list[JsonDict]:
+               config: Optional[JsonDict] = None) -> List[JsonDict]:
     """Naively scramble all words in an example.
 
     Note: Even if more than one field is to be scrambled, only a single example

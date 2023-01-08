@@ -18,7 +18,7 @@ import inspect
 import os
 import random
 from types import MappingProxyType  # pylint: disable=g-importing-member
-from typing import cast, Dict, Optional, Callable, Mapping, Sequence
+from typing import cast, Dict, List, Optional, Callable, Mapping, Sequence
 
 from absl import logging
 
@@ -49,13 +49,13 @@ class Dataset(object):
   """Base class for LIT datasets."""
 
   _spec: Spec = {}
-  _examples: list[JsonDict] = []
+  _examples: List[JsonDict] = []
   _description: Optional[str] = None
   _base: Optional['Dataset'] = None
 
   def __init__(self,
                spec: Optional[Spec] = None,
-               examples: Optional[list[JsonDict]] = None,
+               examples: Optional[List[JsonDict]] = None,
                description: Optional[str] = None,
                base: Optional['Dataset'] = None):
     """Base class constructor.
@@ -111,7 +111,7 @@ class Dataset(object):
       return self._base.load(path)
     pass
 
-  def save(self, examples: list[IndexedInput], path: str):
+  def save(self, examples: List[IndexedInput], path: str):
     """Save newly-created datapoints to disk in a dataset-specific format.
 
     Subclasses should override this method if they wish to save new, persisted
@@ -134,7 +134,7 @@ class Dataset(object):
     return self._spec
 
   @property
-  def examples(self) -> list[JsonDict]:
+  def examples(self) -> List[JsonDict]:
     """Return examples, in format described by spec."""
     return self._examples
 
@@ -196,7 +196,7 @@ class IndexedDataset(Dataset):
 
   _index: Dict[ExampleId, IndexedInput] = {}
 
-  def index_inputs(self, examples: list[types.Input]) -> list[IndexedInput]:
+  def index_inputs(self, examples: List[types.Input]) -> List[IndexedInput]:
     """Create indexed versions of inputs."""
     # pylint: disable=g-complex-comprehension not complex, just a line-too-long
     return [
@@ -211,7 +211,7 @@ class IndexedDataset(Dataset):
   def __init__(self,
                *args,
                id_fn: Optional[IdFnType] = None,
-               indexed_examples: Optional[list[IndexedInput]] = None,
+               indexed_examples: Optional[List[IndexedInput]] = None,
                **kw):
     super().__init__(*args, **kw)
     assert id_fn is not None, 'id_fn must be specified.'
@@ -249,7 +249,7 @@ class IndexedDataset(Dataset):
     """Return a read-only view of the index."""
     return MappingProxyType(self._index)
 
-  def save(self, examples: list[IndexedInput], path: str):
+  def save(self, examples: List[IndexedInput], path: str):
     """Save newly-created datapoints to disk.
 
     Args:

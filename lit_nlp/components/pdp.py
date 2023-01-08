@@ -23,7 +23,7 @@ The front-end can display these as charts.
 
 import copy
 import functools
-from typing import cast, Optional
+from typing import cast, List, Optional
 
 from absl import logging
 from lit_nlp.api import components as lit_components
@@ -60,10 +60,10 @@ class PdpInterpreter(lit_components.Interpreter):
     return np.linspace(min_val, max_val, 10)
 
   def run(self,
-          inputs: list[types.JsonDict],
+          inputs: List[types.JsonDict],
           model: lit_model.Model,
           dataset: lit_dataset.Dataset,
-          model_outputs: Optional[list[types.JsonDict]] = None,
+          model_outputs: Optional[List[types.JsonDict]] = None,
           config: Optional[types.JsonDict] = None):
     """Create PDP chart info using provided inputs.
 

@@ -1,5 +1,5 @@
 """Interpreter component for models that return their own salience."""
-from typing import Dict, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from lit_nlp.api import components
 from lit_nlp.api import dataset as lit_dataset
@@ -33,10 +33,10 @@ class ModelSalience(components.Interpreter):
       for field in fields:
         self._spec[f'{model_name}:{field}'] = model.output_spec()[field]
 
-  def find_fields(self, model: lit_model.Model) -> list[str]:
+  def find_fields(self, model: lit_model.Model) -> List[str]:
     return utils.find_spec_keys(model.output_spec(), _SALIENCE_FIELD_TYPES)
 
-  def _run_single(self, ex: JsonDict, mo: JsonDict, fields: list[str],
+  def _run_single(self, ex: JsonDict, mo: JsonDict, fields: List[str],
                   model: lit_model.Model) -> Dict[str, SalienceTypes]:
     # Extract the saliency outputs from the model.
     result = {}
@@ -45,11 +45,11 @@ class ModelSalience(components.Interpreter):
     return result
 
   def run(self,
-          inputs: list[JsonDict],
+          inputs: List[JsonDict],
           model: lit_model.Model,
           dataset: lit_dataset.Dataset,
-          model_outputs: Optional[list[JsonDict]] = None,
-          config: Optional[JsonDict] = None) -> Optional[list[JsonDict]]:
+          model_outputs: Optional[List[JsonDict]] = None,
+          config: Optional[JsonDict] = None) -> Optional[List[JsonDict]]:
     del dataset
     del config
 

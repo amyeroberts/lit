@@ -14,7 +14,7 @@
 # ==============================================================================
 """Gradient-based attribution."""
 
-from typing import cast, Optional
+from typing import cast, List, Optional
 
 from absl import logging
 from lit_nlp.api import components as lit_components
@@ -38,9 +38,9 @@ INTERPOLATION_KEY = 'Interpolation steps'
 class GradientNorm(lit_components.Interpreter):
   """Salience map from gradient L2 norm."""
 
-  def find_fields(self, output_spec: Spec) -> list[str]:
+  def find_fields(self, output_spec: Spec) -> List[str]:
     # Find TokenGradients fields
-    supported_fields: list[str] = []
+    supported_fields: List[str] = []
 
     # Check that these are aligned to Tokens fields
     for f in utils.find_spec_keys(output_spec, types.TokenGradients):
@@ -64,11 +64,11 @@ class GradientNorm(lit_components.Interpreter):
     return grad_norm
 
   def run(self,
-          inputs: list[JsonDict],
+          inputs: List[JsonDict],
           model: lit_model.Model,
           dataset: lit_dataset.Dataset,
-          model_outputs: Optional[list[JsonDict]] = None,
-          config: Optional[JsonDict] = None) -> Optional[list[JsonDict]]:
+          model_outputs: Optional[List[JsonDict]] = None,
+          config: Optional[JsonDict] = None) -> Optional[List[JsonDict]]:
     """Run this component, given a model and input(s)."""
     del dataset, config
     # Find gradient fields to interpret
@@ -108,7 +108,7 @@ class GradientNorm(lit_components.Interpreter):
 class GradientDotInput(lit_components.Interpreter):
   """Salience map using the values of gradient * input as attribution."""
 
-  def find_fields(self, output_spec: Spec) -> list[str]:
+  def find_fields(self, output_spec: Spec) -> List[str]:
     # Find and check that TokenGradients fields are aligned to Tokens fields
     aligned_fields = []
     for f in utils.find_spec_keys(output_spec, types.TokenGradients):
@@ -144,11 +144,11 @@ class GradientDotInput(lit_components.Interpreter):
     return scores
 
   def run(self,
-          inputs: list[JsonDict],
+          inputs: List[JsonDict],
           model: lit_model.Model,
           dataset: lit_dataset.Dataset,
-          model_outputs: Optional[list[JsonDict]] = None,
-          config: Optional[JsonDict] = None) -> Optional[list[JsonDict]]:
+          model_outputs: Optional[List[JsonDict]] = None,
+          config: Optional[JsonDict] = None) -> Optional[List[JsonDict]]:
     """Run this component, given a model and input(s)."""
     # Find gradient fields to interpret
     output_spec = model.output_spec()
@@ -232,7 +232,7 @@ class IntegratedGradients(lit_components.Interpreter):
     self._interpolation_steps: int = interpolation_steps
     self._normalize: bool = normalize
 
-  def find_fields(self, input_spec: Spec, output_spec: Spec) -> list[str]:
+  def find_fields(self, input_spec: Spec, output_spec: Spec) -> List[str]:
     # Find and check that TokenGradients fields are aligned to Tokens fields
     aligned_fields = []
     for f in utils.find_spec_keys(output_spec, types.TokenGradients):
@@ -306,7 +306,7 @@ class IntegratedGradients(lit_components.Interpreter):
   def get_salience_result(self, model_input: JsonDict, model: lit_model.Model,
                           interpolation_steps: int, normalize: bool,
                           class_to_explain: str, model_output: JsonDict,
-                          grad_fields: list[str]):
+                          grad_fields: List[str]):
     result = {}
 
     output_spec = model.output_spec()
@@ -403,11 +403,11 @@ class IntegratedGradients(lit_components.Interpreter):
     return result
 
   def run(self,
-          inputs: list[JsonDict],
+          inputs: List[JsonDict],
           model: lit_model.Model,
           dataset: lit_dataset.Dataset,
-          model_outputs: Optional[list[JsonDict]] = None,
-          config: Optional[JsonDict] = None) -> Optional[list[JsonDict]]:
+          model_outputs: Optional[List[JsonDict]] = None,
+          config: Optional[JsonDict] = None) -> Optional[List[JsonDict]]:
     """Run this component, given a model and input(s)."""
     config = config or {}
     class_to_explain = config.get(CLASS_KEY, self._class_key)

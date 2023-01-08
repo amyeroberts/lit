@@ -13,7 +13,7 @@
 # limitations under the License.
 # ==============================================================================
 """LIT model wrapper for pre-computed (offline) predictions."""
-from typing import Iterable, Iterator, Optional
+from typing import Iterable, Iterator, List, Optional
 
 from lit_nlp.api import dataset as lit_dataset
 from lit_nlp.api import model as lit_model
@@ -41,7 +41,7 @@ class StaticPredictions(lit_model.Model):
   def __init__(self,
                inputs: lit_dataset.Dataset,
                preds: lit_dataset.Dataset,
-               input_identifier_keys: Optional[list[str]] = None):
+               input_identifier_keys: Optional[List[str]] = None):
     """Build a static index.
 
     Args:
@@ -82,7 +82,7 @@ class StaticPredictions(lit_model.Model):
   def output_spec(self):
     return self._output_spec
 
-  def predict_minibatch(self, inputs: list[JsonDict], **kw):
+  def predict_minibatch(self, inputs: List[JsonDict], **kw):
     return list(self.predict(inputs))
 
   def predict(self, inputs: Iterable[JsonDict], **kw) -> Iterator[JsonDict]:

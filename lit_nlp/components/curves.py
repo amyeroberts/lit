@@ -14,7 +14,7 @@
 # ==============================================================================
 """An interpreters for generating data for ROC and PR curves."""
 
-from typing import cast, Optional, Sequence
+from typing import cast, List, Optional, Sequence
 
 from lit_nlp.api import components as lit_components
 from lit_nlp.api import dataset as lit_dataset
@@ -119,7 +119,7 @@ class CurvesInterpreter(lit_components.Interpreter):
   def meta_spec(self) -> types.Spec:
     return {ROC_DATA: types.CurveDataPoints(), PR_DATA: types.CurveDataPoints()}
 
-  def _find_supported_pred_keys(self, output_spec: types.Spec) -> list[str]:
+  def _find_supported_pred_keys(self, output_spec: types.Spec) -> List[str]:
     """Returns the list of supported prediction keys in the model output.
 
     Args:

@@ -14,7 +14,7 @@
 # ==============================================================================
 """Uses nearest neighbor search for similar examples."""
 
-from typing import Optional
+from typing import List, Optional
 
 from lit_nlp.api import components as lit_components
 from lit_nlp.api import dataset as lit_dataset
@@ -61,7 +61,7 @@ class SimilaritySearcher(lit_components.Generator):
       example: types.Input,
       model: lit_model.Model,
       dataset: lit_dataset.IndexedDataset,
-      config: Optional[JsonDict] = None) -> list[JsonDict]:
+      config: Optional[JsonDict] = None) -> List[JsonDict]:
     """Find similar examples for an example/model/dataset."""
     model_name = config['model_name']
     dataset_name = config['dataset_name']

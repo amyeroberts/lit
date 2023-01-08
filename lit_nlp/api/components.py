@@ -15,7 +15,7 @@
 """Base classes for LIT backend components."""
 import abc
 import inspect
-from typing import Any, Dict, Optional, Sequence
+from typing import Any, Dict, List, Optional, Sequence
 
 from lit_nlp.api import dataset as lit_dataset
 from lit_nlp.api import model as lit_model
@@ -42,10 +42,10 @@ class Interpreter(metaclass=abc.ABCMeta):
     return inspect.getdoc(self) or ''
 
   def run(self,
-          inputs: list[JsonDict],
+          inputs: List[JsonDict],
           model: lit_model.Model,
           dataset: lit_dataset.Dataset,
-          model_outputs: Optional[list[JsonDict]] = None,
+          model_outputs: Optional[List[JsonDict]] = None,
           config: Optional[JsonDict] = None):
     """Run this component, given a model and input(s)."""
     raise NotImplementedError(
@@ -56,7 +56,7 @@ class Interpreter(metaclass=abc.ABCMeta):
                         indexed_inputs: Sequence[IndexedInput],
                         model: lit_model.Model,
                         dataset: lit_dataset.IndexedDataset,
-                        model_outputs: Optional[list[JsonDict]] = None,
+                        model_outputs: Optional[List[JsonDict]] = None,
                         config: Optional[JsonDict] = None):
     """Run this component, with access to data indices and metadata."""
     inputs = [ex['data'] for ex in indexed_inputs]
@@ -111,7 +111,7 @@ class ComponentGroup(Interpreter):
       indexed_inputs: Sequence[IndexedInput],
       model: lit_model.Model,
       dataset: lit_dataset.IndexedDataset,
-      model_outputs: Optional[list[JsonDict]] = None,
+      model_outputs: Optional[List[JsonDict]] = None,
       config: Optional[JsonDict] = None) -> Dict[str, JsonDict]:
     """Run this component, given a model and input(s)."""
     if model_outputs is None:
@@ -136,7 +136,7 @@ class Generator(Interpreter):
                         indexed_inputs: Sequence[IndexedInput],
                         model: lit_model.Model,
                         dataset: lit_dataset.IndexedDataset,
-                        model_outputs: Optional[list[JsonDict]] = None,
+                        model_outputs: Optional[List[JsonDict]] = None,
                         config: Optional[JsonDict] = None):
     """Run this component, with access to data indices and metadata."""
     #  IndexedInput[] -> Input[]
@@ -144,10 +144,10 @@ class Generator(Interpreter):
     return self.generate_all(inputs, model, dataset, config)
 
   def generate_all(self,
-                   inputs: list[JsonDict],
+                   inputs: List[JsonDict],
                    model: lit_model.Model,
                    dataset: lit_dataset.Dataset,
-                   config: Optional[JsonDict] = None) -> list[list[JsonDict]]:
+                   config: Optional[JsonDict] = None) -> List[List[JsonDict]]:
     """Run generation on a set of inputs.
 
     Args:
@@ -169,7 +169,7 @@ class Generator(Interpreter):
                example: JsonDict,
                model: lit_model.Model,
                dataset: lit_dataset.Dataset,
-               config: Optional[JsonDict] = None) -> list[JsonDict]:
+               config: Optional[JsonDict] = None) -> List[JsonDict]:
     """Return a list of generated examples."""
     pass
 
@@ -198,8 +198,8 @@ class Metrics(Interpreter):
       inputs: Sequence[JsonDict],
       model: lit_model.Model,
       dataset: lit_dataset.Dataset,
-      model_outputs: Optional[list[JsonDict]] = None,
-      config: Optional[JsonDict] = None) -> list[JsonDict]:
+      model_outputs: Optional[List[JsonDict]] = None,
+      config: Optional[JsonDict] = None) -> List[JsonDict]:
     raise NotImplementedError(
         'Subclass should implement its own run using compute.')
 
@@ -208,8 +208,8 @@ class Metrics(Interpreter):
       indexed_inputs: Sequence[IndexedInput],
       model: lit_model.Model,
       dataset: lit_dataset.IndexedDataset,
-      model_outputs: Optional[list[JsonDict]] = None,
-      config: Optional[JsonDict] = None) -> list[JsonDict]:
+      model_outputs: Optional[List[JsonDict]] = None,
+      config: Optional[JsonDict] = None) -> List[JsonDict]:
     inputs = [inp['data'] for inp in indexed_inputs]
     return self.run(inputs, model, dataset, model_outputs, config)
 
@@ -266,7 +266,7 @@ class Annotator(metaclass=abc.ABCMeta):
     self._annotator_model = annotator_model
 
   @abc.abstractmethod
-  def annotate(self, inputs: list[JsonDict],
+  def annotate(self, inputs: List[JsonDict],
                dataset: lit_dataset.Dataset,
                dataset_spec_to_annotate: Optional[types.Spec] = None):
     """Annotate the provided inputs.

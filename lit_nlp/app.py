@@ -21,7 +21,7 @@ import os
 import random
 import threading
 import time
-from typing import Dict, Optional, Mapping, Sequence, Union, Callable, Iterable
+from typing import Dict, Optional, List, Mapping, Sequence, Union, Callable, Iterable
 
 from absl import logging
 
@@ -144,7 +144,7 @@ class LitApp(object):
     return self._info
 
   def _reconstitute_inputs(self, inputs: Sequence[Union[IndexedInput, str]],
-                           dataset_name: str) -> list[IndexedInput]:
+                           dataset_name: str) -> List[IndexedInput]:
     """Reconstitute any inputs sent as references (bare IDs)."""
     index = self._datasets[dataset_name].index
     # TODO(b/178228238): set up proper debug logging and hide this by default.
@@ -189,7 +189,7 @@ class LitApp(object):
       **kw: additional args passed to model.predict_with_metadata()
 
     Returns:
-      list[JsonDict] containing requested fields of model predictions
+      List[JsonDict] containing requested fields of model predictions
     """
     preds = list(self._models[model].predict_with_metadata(
         data['inputs'], dataset_name=dataset_name, **kw))
@@ -218,7 +218,7 @@ class LitApp(object):
   def _annotate_new_data(self,
                          data,
                          dataset_name: Optional[str] = None,
-                         **unused_kw) -> list[IndexedInput]:
+                         **unused_kw) -> List[IndexedInput]:
     """Fill in index and other extra data for the provided datapoints."""
     # TODO(lit-dev): unify this with hash fn on dataset objects.
     assert dataset_name is not None, 'No dataset specified.'
@@ -284,7 +284,7 @@ class LitApp(object):
   def _get_dataset(self,
                    unused_data,
                    dataset_name: Optional[str] = None,
-                   **unused_kw) -> list[IndexedInput]:
+                   **unused_kw) -> List[IndexedInput]:
     """Attempt to get dataset, or override with a specific path."""
     return self._datasets[dataset_name].indexed_examples
 
@@ -335,7 +335,7 @@ class LitApp(object):
     generator: lit_components.Generator = self._generators[generator_name]
     dataset = self._datasets[dataset_name]
     # Nested list, containing generated examples from each input.
-    all_generated: list[list[Input]] = generator.run_with_metadata(
+    all_generated: List[List[Input]] = generator.run_with_metadata(
         data['inputs'], self._models[model], dataset, config=data.get('config'))
 
     # Annotate datapoints
@@ -350,7 +350,7 @@ class LitApp(object):
     ]
 
     # Add metadata.
-    all_generated_indexed: list[list[IndexedInput]] = [
+    all_generated_indexed: List[List[IndexedInput]] = [
         dataset.index_inputs(generated) for generated in annotated_generated
     ]
     for parent, indexed_generated in zip(data['inputs'], all_generated_indexed):
@@ -430,7 +430,7 @@ class LitApp(object):
       for dataset_name in model_info['datasets']:
         logging.info("Warm-start of model '%s' on dataset '%s'", model,
                      dataset_name)
-        all_examples: list[IndexedInput] = self._get_dataset([], dataset_name)
+        all_examples: List[IndexedInput] = self._get_dataset([], dataset_name)
         if rate < 1:
           examples = random.sample(all_examples, int(len(all_examples) * rate))
           logging.info('Partial warm-start: running on %d/%d examples.',
@@ -442,7 +442,7 @@ class LitApp(object):
                             dataset_name,
                             progress_indicator=progress_indicator)
 
-  def _warm_projections(self, interpreters: list[str]):
+  def _warm_projections(self, interpreters: List[str]):
     """Pre-compute UMAP/PCA projections with default arguments."""
     for model, model_info in self._info['models'].items():
       for dataset_name in model_info['datasets']:
@@ -510,7 +510,7 @@ class LitApp(object):
       datasets: Mapping[str, lit_dataset.Dataset],
       generators: Optional[Mapping[str, lit_components.Generator]] = None,
       interpreters: Optional[Mapping[str, lit_components.Interpreter]] = None,
-      annotators: Optional[list[lit_components.Annotator]] = None,
+      annotators: Optional[List[lit_components.Annotator]] = None,
       layouts: Optional[layout.LitComponentLayouts] = None,
       # General server config; see server_flags.py.
       data_dir: Optional[str] = None,

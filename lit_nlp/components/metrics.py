@@ -15,7 +15,7 @@
 """Metric component and implementations."""
 
 import collections
-from typing import Any, Dict, Callable, Optional, Sequence, Tuple, Union, cast
+from typing import Any, Dict, Callable, List, Optional, Sequence, Tuple, Union, cast
 
 from absl import logging
 from lit_nlp.api import components as lit_components
@@ -72,7 +72,7 @@ class SimpleMetrics(lit_components.Metrics):
           inputs: Sequence[JsonDict],
           model: lit_model.Model,
           dataset: lit_dataset.Dataset,
-          model_outputs: Optional[list[JsonDict]] = None,
+          model_outputs: Optional[List[JsonDict]] = None,
           config: Optional[JsonDict] = None):
     if model_outputs is None:
       model_outputs = list(model.predict(inputs))
@@ -104,8 +104,8 @@ class SimpleMetrics(lit_components.Metrics):
                         indexed_inputs: Sequence[IndexedInput],
                         model: lit_model.Model,
                         dataset: lit_dataset.IndexedDataset,
-                        model_outputs: Optional[list[JsonDict]] = None,
-                        config: Optional[JsonDict] = None) -> list[JsonDict]:
+                        model_outputs: Optional[List[JsonDict]] = None,
+                        config: Optional[JsonDict] = None) -> List[JsonDict]:
     if model_outputs is None:
       model_outputs = list(model.predict_with_metadata(indexed_inputs))
 
@@ -166,10 +166,10 @@ class ClassificationMetricsWrapper(lit_components.Interpreter):
     return self._metrics.meta_spec()
 
   def run(self,
-          inputs: list[JsonDict],
+          inputs: List[JsonDict],
           model: lit_model.Model,
           dataset: lit_dataset.Dataset,
-          model_outputs: Optional[list[JsonDict]] = None,
+          model_outputs: Optional[List[JsonDict]] = None,
           config: Optional[JsonDict] = None):
     # Get margin for each input for each pred key and add them to a config dict
     # to pass to the wrapped metrics.
@@ -190,8 +190,8 @@ class ClassificationMetricsWrapper(lit_components.Interpreter):
                         indexed_inputs: Sequence[IndexedInput],
                         model: lit_model.Model,
                         dataset: lit_dataset.IndexedDataset,
-                        model_outputs: Optional[list[JsonDict]] = None,
-                        config: Optional[JsonDict] = None) -> list[JsonDict]:
+                        model_outputs: Optional[List[JsonDict]] = None,
+                        config: Optional[JsonDict] = None) -> List[JsonDict]:
     # Get margin for each input for each pred key and add them to a config dict
     # to pass to the wrapped metrics.
     field_map = map_pred_keys(dataset.spec(),
@@ -315,7 +315,7 @@ class MulticlassMetricsImpl(SimpleMetrics):
     # null_idx as the negative / "other" class.
     if null_idx is not None:
       # Note: labels here are indices.
-      labels: list[int] = [
+      labels: List[int] = [
           i for i in range(len(pred_spec.vocab)) if i != null_idx
       ]
       ret['precision'] = sklearn_metrics.precision_score(
@@ -469,7 +469,7 @@ class MulticlassPairedMetricsImpl(SimpleMetrics):
 
   @staticmethod
   def find_pairs(indices: Sequence[types.ExampleId],
-                 metas: Sequence[JsonDict]) -> list[Tuple[int, int]]:
+                 metas: Sequence[JsonDict]) -> List[Tuple[int, int]]:
     """Find valid pairs in the current selection, and return list indices."""
     id_to_position = {example_id: i for i, example_id in enumerate(indices)}
     pairs = []  # (i,j) relative to labels and preds lists

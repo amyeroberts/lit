@@ -29,7 +29,7 @@ from lit_nlp.lib import caching
 # Labels used in the test dataset.
 COLORS = ['red', 'green', 'blue']
 
-Curve = list[Tuple[float, float]]
+Curve = List[Tuple[float, float]]
 Model = lit_model.Model
 
 

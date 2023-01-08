@@ -1,6 +1,6 @@
 """Data loaders for summarization datasets."""
 
-from typing import Optional
+from typing import List, Optional
 from lit_nlp.api import dataset as lit_dataset
 from lit_nlp.api import types as lit_types
 import pandas as pd
@@ -68,7 +68,7 @@ class CNNDMData(lit_dataset.Dataset):
   def load_datapoints(self,
                       path: str,
                       max_seq_len: int = 500,
-                      skiplines: int = 0) -> list[lit_types.JsonDict]:
+                      skiplines: int = 0) -> List[lit_types.JsonDict]:
     """Loads the dataset from a CSV file.
 
     Args:

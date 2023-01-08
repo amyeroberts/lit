@@ -15,7 +15,7 @@
 """Counterfactual explanations using linear model."""
 
 import copy
-from typing import Any, Dict, Optional, Sequence, Iterable
+from typing import Any, Dict, List, Optional, Sequence, Iterable
 
 from absl import logging
 from lit_nlp.api import components as lit_components
@@ -73,11 +73,11 @@ class LEMON(lit_components.Interpreter):
     return utils.spec_contains(model.input_spec(), types.TextSegment)
 
   def run(self,
-          inputs: list[JsonDict],
+          inputs: List[JsonDict],
           model: lit_model.Model,
           dataset: lit_dataset.Dataset,
-          model_outputs: Optional[list[JsonDict]] = None,
-          config: Optional[JsonDict] = None) -> Optional[list[JsonDict]]:
+          model_outputs: Optional[List[JsonDict]] = None,
+          config: Optional[JsonDict] = None) -> Optional[List[JsonDict]]:
     """Run this component, given a model and input(s)."""
     if not (inputs and config):
       return None

@@ -14,7 +14,7 @@
 # ==============================================================================
 """An interpreter for analyzing regression results."""
 
-from typing import cast, Dict, Optional
+from typing import cast, Dict, List, Optional
 
 from lit_nlp.api import components as lit_components
 from lit_nlp.api import dataset as lit_dataset
@@ -33,17 +33,17 @@ class RegressionInterpreter(lit_components.Interpreter):
 
   def run(  # pytype: disable=signature-mismatch  # overriding-parameter-type-checks
       self,
-      inputs: list[JsonDict],
+      inputs: List[JsonDict],
       model: lit_model.Model,
       dataset: lit_dataset.IndexedDataset,
-      model_outputs: Optional[list[JsonDict]] = None,
+      model_outputs: Optional[List[JsonDict]] = None,
       config: Optional[JsonDict] = None):
 
     # Find the prediction field key in the model output to use for calculations.
     output_spec = model.output_spec()
     supported_keys = self._find_supported_pred_keys(output_spec)
 
-    results: list[Dict[str, dtypes.RegressionResult]] = []
+    results: List[Dict[str, dtypes.RegressionResult]] = []
 
     # Run prediction if needed:
     if model_outputs is None:
@@ -73,5 +73,5 @@ class RegressionInterpreter(lit_components.Interpreter):
     del dataset  # Unused as regressions depend on model only
     return lit_utils.spec_contains(model.output_spec(), types.RegressionScore)
 
-  def _find_supported_pred_keys(self, output_spec: types.Spec) -> list[str]:
+  def _find_supported_pred_keys(self, output_spec: types.Spec) -> List[str]:
     return lit_utils.find_spec_keys(output_spec, types.RegressionScore)

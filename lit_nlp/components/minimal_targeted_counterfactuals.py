@@ -62,7 +62,7 @@ References:
 """
 
 import collections
-from typing import Any, cast, Dict, Optional, Tuple
+from typing import Any, cast, Dict, List, Optional, Tuple
 from absl import logging
 
 from lit_nlp.api import components as lit_components
@@ -139,7 +139,7 @@ class TabularMTC(lit_components.Generator):
                example: JsonDict,
                model: lit_model.Model,
                dataset: lit_dataset.Dataset,
-               config: Optional[JsonDict] = None) -> list[JsonDict]:
+               config: Optional[JsonDict] = None) -> List[JsonDict]:
 
     # Perform validation and retrieve configuration.
     if not model:
@@ -191,7 +191,7 @@ class TabularMTC(lit_components.Generator):
         model_input_spec=model.input_spec(),
         example=example)
 
-    candidates: list[JsonDict] = []
+    candidates: List[JsonDict] = []
 
     # Iterate through all possible feature combinations.
     combs = utils.find_all_combinations(supported_field_names, 1, max_flips)
@@ -279,7 +279,7 @@ class TabularMTC(lit_components.Generator):
       model: lit_model.Model,
       reference_output: JsonDict,
       pred_key: str,
-      regression_thresh: Optional[float] = None) -> list[JsonDict]:
+      regression_thresh: Optional[float] = None) -> List[JsonDict]:
     """Reads all dataset examples and returns only those that are flips."""
     if not isinstance(dataset, lit_dataset.IndexedDataset):
       raise ValueError(
@@ -329,7 +329,7 @@ class TabularMTC(lit_components.Generator):
       self,
       ref_example: JsonDict,
       ds_example: JsonDict,
-      features_to_consider: list[str],
+      features_to_consider: List[str],
       model: lit_model.Model,
       target_pred: JsonDict,
       pred_key: str,
@@ -484,7 +484,7 @@ class TabularMTC(lit_components.Generator):
       self,
       ds_spec: lit_dataset.Spec,
       model_input_spec: lit_model.Spec,
-      example: Optional[JsonDict] = None) -> list[str]:
+      example: Optional[JsonDict] = None) -> List[str]:
     overlapping = set(ds_spec.keys()).intersection(model_input_spec.keys())
     supported = [f for f in overlapping if self._is_supported(ds_spec[f])]
     if example:
@@ -519,10 +519,10 @@ class TabularMTC(lit_components.Generator):
     # Cache the stats for the given dataset.
     self._datasets_stats[dataset_name] = field_stats
 
-  def _calculate_std_dev(self, values: list[float]) -> float:
+  def _calculate_std_dev(self, values: List[float]) -> float:
     return np.std(values)
 
-  def _calculate_categorical_prob(self, values: list[float]) -> float:
+  def _calculate_categorical_prob(self, values: List[float]) -> float:
     """Returns probability of two values from the list having the same value."""
     counts = collections.Counter(values)
     prob = 0.0
@@ -537,7 +537,7 @@ class TabularMTC(lit_components.Generator):
       dataset: lit_dataset.Dataset,
       dataset_name: str,
       model: Optional[lit_model.Model] = None,
-      field_names: Optional[list[str]] = None) -> Tuple[float, list[str]]:
+      field_names: Optional[List[str]] = None) -> Tuple[float, List[str]]:
     """Calculates L1 distance between two input examples.
 
     Only categorical and scalar example features are considered. For categorical
@@ -634,10 +634,10 @@ class TabularMTC(lit_components.Generator):
       else:
         example[parent] = predicted_value
 
-  def _sort_and_filter_examples(self, examples: list[JsonDict],
-                                ref_example: JsonDict, fields: list[str],
+  def _sort_and_filter_examples(self, examples: List[JsonDict],
+                                ref_example: JsonDict, fields: List[str],
                                 dataset: lit_dataset.Dataset,
-                                dataset_name: str) -> list[JsonDict]:
+                                dataset_name: str) -> List[JsonDict]:
     # Keep only those examples which field values are different from the
     # reference example.
     filtered_examples = []
@@ -667,7 +667,7 @@ class TabularMTC(lit_components.Generator):
 
     # Calculate distances with respect to the reference example taking into
     # consideration only the given fields.
-    distances = []  # type: list[float]
+    distances = []  # type: List[float]
     for example in dedup_examples:
       distance, _ = self._calculate_L1_distance(
           example_1=example,
@@ -683,7 +683,7 @@ class TabularMTC(lit_components.Generator):
     return list(sorted_tuples)
 
   def _add_if_not_strictly_worse(self, example: JsonDict,
-                                 other_examples: list[JsonDict],
+                                 other_examples: List[JsonDict],
                                  ref_example: JsonDict,
                                  dataset: lit_dataset.Dataset,
                                  dataset_name: str, model: lit_model.Model):
@@ -725,7 +725,7 @@ class TabularMTC(lit_components.Generator):
       return True
     return False
 
-  def _create_hash(self, example: JsonDict, fields: list[str]) -> str:
+  def _create_hash(self, example: JsonDict, fields: List[str]) -> str:
     json_map = lit_types.Input(
         {k: v for k, v in example.items() if k in fields})
     return caching.input_hash(json_map)

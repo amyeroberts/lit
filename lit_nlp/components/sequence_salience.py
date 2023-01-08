@@ -1,5 +1,5 @@
 """Interpreter components for seq2seq salience."""
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 import Levenshtein  # TEMPORARY; for dummy salience
 from lit_nlp.api import components
@@ -18,13 +18,13 @@ _SUPPORTED_OUTPUTS = (types.GeneratedText, types.GeneratedTextCandidates)
 class DummySequenceSalience(components.Interpreter):
   """Dummy-valued seq2seq salience, for testing."""
 
-  def find_fields(self, model: lit_model.Model) -> Dict[str, list[str]]:
+  def find_fields(self, model: lit_model.Model) -> Dict[str, List[str]]:
     src_fields = utils.find_spec_keys(model.input_spec(), types.TextSegment)
     gen_fields = utils.find_spec_keys(model.output_spec(), _SUPPORTED_OUTPUTS)
     return {f: src_fields for f in gen_fields}
 
   def _dummy_sequence_salience(
-      self, source_tokens: list[str], target_tokens: list[str]):
+      self, source_tokens: List[str], target_tokens: List[str]):
     """Compute salience matrix based on Levenshtein similarity."""
     all_input_tokens = source_tokens + target_tokens
     smat = np.zeros([len(target_tokens), len(all_input_tokens)])
@@ -53,11 +53,11 @@ class DummySequenceSalience(components.Interpreter):
     return result
 
   def run(self,
-          inputs: list[JsonDict],
+          inputs: List[JsonDict],
           model: lit_model.Model,
           dataset: lit_dataset.Dataset,
-          model_outputs: Optional[list[JsonDict]] = None,
-          config: Optional[JsonDict] = None) -> Optional[list[JsonDict]]:
+          model_outputs: Optional[List[JsonDict]] = None,
+          config: Optional[JsonDict] = None) -> Optional[List[JsonDict]]:
     del dataset
     del config
 

@@ -36,7 +36,7 @@ the requested output class.
 """
 import collections
 import functools
-from typing import Any, Callable, Dict, Iterable, Optional, Sequence
+from typing import Any, Callable, Dict, Iterable, List, Optional, Sequence
 
 from lit_nlp.components.citrus import helpers
 from lit_nlp.components.citrus import utils
@@ -89,7 +89,7 @@ def get_masks(counterfactuals: Sequence[Sequence[str]],
 
 def explain(
     sentence: str,
-    counterfactuals: list[str],
+    counterfactuals: List[str],
     predict_fn: Callable[[Iterable[str]], np.ndarray],
     class_to_explain: int,
     tokenizer: Any = str.split,

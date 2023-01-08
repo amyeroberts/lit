@@ -14,7 +14,7 @@
 # ==============================================================================
 """Tests for lit_nlp.components.metrics."""
 
-from typing import Dict, Optional, Union
+from typing import Dict, List, Optional, Union
 from absl.testing import absltest
 from absl.testing import parameterized
 from lit_nlp.api import dataset as lit_dataset
@@ -36,7 +36,7 @@ class TestGenTextModel(lit_model.Model):
     return {'output': types.GeneratedText(parent='input')}
 
   def predict_minibatch(self,
-                        inputs: list[types.JsonDict]) -> list[types.JsonDict]:
+                        inputs: List[types.JsonDict]) -> List[types.JsonDict]:
     return [{'output': 'test_output'}] * len(inputs)
 
 
@@ -52,7 +52,7 @@ class TestGenTextCandsModel(lit_model.Model):
     return {'output': types.GeneratedTextCandidates(parent='input')}
 
   def predict_minibatch(self,
-                        inputs: list[types.JsonDict]) -> list[types.JsonDict]:
+                        inputs: List[types.JsonDict]) -> List[types.JsonDict]:
     return [
         {'output': [('gen_text one', 0.8), ('gen_text two', 0.3)]}
     ] * len(inputs)
@@ -102,7 +102,7 @@ class RegressionMetricsTest(parameterized.TestCase):
       ('incorrect', [1, 2, 3, 4], [-5, -10, 5, 6], 47.0, 0.79559, 0.799999),
       ('some_correct', [1, 2, 3, 4], [1, 2, 5.5, 6.3], 2.885, 0.96566, 1.0),
   )
-  def test_compute(self, labels: list[float], preds: list[float], mse: float,
+  def test_compute(self, labels: List[float], preds: List[float], mse: float,
                    pearsonr: float, spearmanr: float):
     expected = {'mse': mse, 'pearsonr': pearsonr, 'spearmanr': spearmanr}
     result = self.metrics.compute(labels, preds,
@@ -178,7 +178,7 @@ class MulticlassMetricsTest(parameterized.TestCase):
       ),
   )
   def test_compute_multiclass(
-      self, vocab: list[str], labels: list[str], preds: list[list[int]],
+      self, vocab: List[str], labels: List[str], preds: List[List[int]],
       accuracy: float, f1: float, precision: float, recall: float):
     expected = {
         'accuracy': accuracy,
@@ -271,7 +271,7 @@ class MulticlassPairedMetricsTest(parameterized.TestCase):
       ('two_swaps', [[0, 1], [1, 0], [1, 0], [0, 1]], 0, 0.69315, 1.0),
       ('no_null_index', [[0, 1], [1, 0], [1, 0], [0, 1]], None, 0.69315, 1.0),
   )
-  def test_compute_with_metadata(self, preds: list[list[int]],
+  def test_compute_with_metadata(self, preds: List[List[int]],
                                  null_idx: Optional[int], mean_jsd: float,
                                  swap_rate: float):
 
@@ -340,7 +340,7 @@ class CorpusBLEUTest(parameterized.TestCase):
           ['these test.', 'Test two', 'A third test example'], 29.508062
       ),
   )
-  def test_compute(self, preds: list[str], score: float):
+  def test_compute(self, preds: List[str], score: float):
     labels = ['This is a test.', 'Test one', 'A third test']
     expected = {'corpus_bleu': score}
     result = self.metrics.compute(labels, preds, types.GeneratedText(),
@@ -414,7 +414,7 @@ class RougeLTest(parameterized.TestCase):
           ['these test.', 'Test two', 'A third test example'], 0.563492
       ),
   )
-  def test_compute(self, preds: list[str], score: float):
+  def test_compute(self, preds: List[str], score: float):
     labels = ['This is a test.', 'Test one', 'A third test']
     expected = {'rougeL': score}
     result = self.metrics.compute(labels, preds, types.TextSegment(),
@@ -661,8 +661,8 @@ class ExactMatchTest(parameterized.TestCase):
       ),
   )
   def test_compute(self,
-                   labels: Union[list[str],
-                                 list[list[dtypes.AnnotationCluster]]],
+                   labels: Union[List[str],
+                                 List[List[dtypes.AnnotationCluster]]],
                    preds,
                    label_spec: Union[types.MultiSegmentAnnotations,
                                      types.TextSegment],

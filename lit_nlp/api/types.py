@@ -28,7 +28,7 @@ import abc
 import enum
 import math
 import numbers
-from typing import Any, Dict, NewType, Optional, Sequence, Tuple, Type, TypedDict, Union
+from typing import Any, Dict, List, NewType, Optional, Sequence, Tuple, Type, TypedDict, Union
 
 import attr
 from lit_nlp.api import dtypes
@@ -482,7 +482,7 @@ class _Tensor(LitType):
     else:
       raise ValueError(f"{value} is not a list or ndarray of numbers")
 
-  def validate_ndim(self, value, ndim: Union[int, list[int]]):
+  def validate_ndim(self, value, ndim: Union[int, List[int]]):
     """Validate the number of dimensions in a tensor.
 
     Args:

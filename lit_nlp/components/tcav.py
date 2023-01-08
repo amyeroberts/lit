@@ -16,7 +16,7 @@
 
 import math
 import random
-from typing import Any, cast, Optional, Sequence
+from typing import Any, cast, List, Optional, Sequence
 
 import attr
 from lit_nlp.api import components as lit_components
@@ -43,14 +43,14 @@ MIN_SPLITS = 2
 @attr.s(auto_attribs=True, kw_only=True)
 class TCAVConfig(object):
   """Config options for TCAV component."""
-  concept_set_ids: list[str] = []
+  concept_set_ids: List[str] = []
   class_to_explain: str = ''
   grad_layer: str = ''
   dataset_name: str = ''
   # Percentage of the example set to use in the test set when training the LM.
   test_size: Optional[float] = 0.33
   random_state: Optional[int] = 42
-  negative_set_ids: list[str] = []
+  negative_set_ids: List[str] = []
   # Optional pre-computed CAV to use by interpreter.
   cav: Optional[Any] = None
 
@@ -99,8 +99,8 @@ class TCAV(lit_components.Interpreter):
       indexed_inputs: Sequence[IndexedInput],
       model: lit_model.Model,
       dataset: lit_dataset.IndexedDataset,
-      model_outputs: Optional[list[JsonDict]] = None,
-      config: Optional[JsonDict] = None) -> Optional[list[JsonDict]]:
+      model_outputs: Optional[List[JsonDict]] = None,
+      config: Optional[JsonDict] = None) -> Optional[List[JsonDict]]:
     """Runs the TCAV method given the params in the inputs and config.
 
     Args:
@@ -351,15 +351,15 @@ class TCAV(lit_components.Interpreter):
          np.ones(len(concept_outputs))])
     return x, y
 
-  def _get_cos_sim(self, cav, datapoints_output: list[JsonDict],
+  def _get_cos_sim(self, cav, datapoints_output: List[JsonDict],
                    emb_layer: str):
     cos_sim, _ = self.compute_local_scores(cav, datapoints_output, emb_layer)
     return cos_sim
 
   def _run_tcav(self,
-                concept_outputs: list[JsonDict],
-                comparison_outputs: list[JsonDict],
-                dataset_outputs: list[JsonDict],
+                concept_outputs: List[JsonDict],
+                comparison_outputs: List[JsonDict],
+                dataset_outputs: List[JsonDict],
                 class_to_explain: Any,
                 emb_layer: str,
                 grad_layer: str,

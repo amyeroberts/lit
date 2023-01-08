@@ -15,7 +15,7 @@
 """Finds the k nearest neighbors to an input embedding."""
 
 
-from typing import Optional, Sequence
+from typing import List, Optional, Sequence
 import attr
 from lit_nlp.api import components as lit_components
 from lit_nlp.api import dataset as lit_dataset
@@ -59,8 +59,8 @@ class NearestNeighbors(lit_components.Interpreter):
       indexed_inputs: Sequence[IndexedInput],
       model: lit_model.Model,
       dataset: lit_dataset.IndexedDataset,
-      model_outputs: Optional[list[JsonDict]] = None,
-      config: Optional[JsonDict] = None) -> Optional[list[JsonDict]]:
+      model_outputs: Optional[List[JsonDict]] = None,
+      config: Optional[JsonDict] = None) -> Optional[List[JsonDict]]:
     """Finds the nearest neighbors of the example specified in the config.
 
     Args:

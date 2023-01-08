@@ -14,7 +14,7 @@
 # ==============================================================================
 """SHAP explanations for datasets and models."""
 
-from typing import Dict, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from lit_nlp.api import components as lit_components
 from lit_nlp.api import dataset as lit_dataset
@@ -96,12 +96,12 @@ class TabularShapExplainer(lit_components.Interpreter):
 
   def run(
       self,
-      inputs: list[JsonDict],
+      inputs: List[JsonDict],
       model: lit_model.Model,
       dataset: lit_dataset.Dataset,
-      model_outputs: Optional[list[JsonDict]] = None,
+      model_outputs: Optional[List[JsonDict]] = None,
       config: Optional[JsonDict] = None
-  ) -> Optional[list[Dict[str, dtypes.FeatureSalience]]]:
+  ) -> Optional[List[Dict[str, dtypes.FeatureSalience]]]:
     """Generate SHAP explanations for model predictions given a set of inputs.
 
     Args:
@@ -148,15 +148,15 @@ class TabularShapExplainer(lit_components.Interpreter):
     background = pd.DataFrame(random_baseline)[input_feats]
 
     def prediction_fn(examples):
-      dict_examples: list[JsonDict] = [{
+      dict_examples: List[JsonDict] = [{
           input_feats[i]: example[i] for i in range(len(input_feats))
       } for example in examples]
 
-      preds: list[Union[int, float]] = []
+      preds: List[Union[int, float]] = []
 
       for pred in model.predict(dict_examples):
         if isinstance(pred_spec, types.MulticlassPreds):
-          pred_list: list[float] = list(pred[pred_key])
+          pred_list: List[float] = list(pred[pred_key])
           max_value: float = max(pred_list)
           index: int = pred_list.index(max_value)
           preds.append(index)

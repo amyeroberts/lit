@@ -31,7 +31,7 @@ This generator builds on ideas from the following paper.
 import collections
 import copy
 import itertools
-from typing import Iterator, Optional, Tuple
+from typing import Iterator, List, Optional, Tuple
 
 from absl import logging
 from lit_nlp.api import components as lit_components
@@ -108,7 +108,7 @@ class AblationFlip(lit_components.Generator):
 
   def _gen_ablation_idxs(
       self,
-      loo_scores: list[Tuple[str, int, float]],
+      loo_scores: List[Tuple[str, int, float]],
       max_ablations: int,
       orig_regression_score: Optional[float] = None,
       regression_thresh: Optional[float] = None
@@ -150,7 +150,7 @@ class AblationFlip(lit_components.Generator):
   def _create_cf(self,
                  example: JsonDict,
                  input_spec: Spec,
-                 ablation_idxs: list[Tuple[str, int]]) -> JsonDict:
+                 ablation_idxs: List[Tuple[str, int]]) -> JsonDict:
     # Build a dictionary mapping input fields to the token idxs to be ablated
     # from that field.
     ablation_idxs_per_field = collections.defaultdict(list)
@@ -192,8 +192,8 @@ class AblationFlip(lit_components.Generator):
       output_spec: Spec,
       orig_output: JsonDict,
       pred_key: str,
-      fields_to_ablate: list[str],
-      tokens_to_ignore: list[str]) -> list[Tuple[str, int, float]]:
+      fields_to_ablate: List[str],
+      tokens_to_ignore: List[str]) -> List[Tuple[str, int, float]]:
     # Returns a list of triples: field, token_idx and leave-one-out score.
     ret = []
     for field in input_spec.keys():
@@ -245,7 +245,7 @@ class AblationFlip(lit_components.Generator):
                example: JsonDict,
                model: lit_model.Model,
                dataset: lit_dataset.Dataset,
-               config: Optional[JsonDict] = None) -> list[JsonDict]:
+               config: Optional[JsonDict] = None) -> List[JsonDict]:
     """Identify minimal sets of token albations that alter the prediction."""
     del dataset  # Unused.
 

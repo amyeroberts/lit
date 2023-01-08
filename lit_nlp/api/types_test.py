@@ -33,10 +33,10 @@ class TypesTest(parameterized.TestCase):
     self.assertFalse(hasattr(lit_type, "not_a_property"))
 
   @parameterized.named_parameters(
-      ("list[int]", [1, 2, 3], 1),
+      ("List[int]", [1, 2, 3], 1),
       ("np_array[int]", np.array([1, 2, 3]), 1),
-      ("np_array[list[int]]", np.array([[1, 1], [2, 3]]), 2),
-      ("np_array[list[int]]_2_dim", np.array([[1, 1], [2, 3]]), [2, 4]),
+      ("np_array[List[int]]", np.array([[1, 1], [2, 3]]), 2),
+      ("np_array[List[int]]_2_dim", np.array([[1, 1], [2, 3]]), [2, 4]),
   )
   def test_tensor_ndim(self, value, ndim):
     emb = types.Embeddings()

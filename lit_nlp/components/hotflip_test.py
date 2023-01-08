@@ -14,7 +14,7 @@
 # ==============================================================================
 """Tests for lit_nlp.components.hotflip."""
 
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 from absl.testing import absltest
 from absl.testing import parameterized
@@ -59,7 +59,7 @@ class TestClassificationModel(lit_model.Model):
     return ([], np.ndarray([]))
 
   def predict_minibatch(
-      self, inputs: list[lit_model.JsonDict]) -> list[lit_model.JsonDict]:
+      self, inputs: List[lit_model.JsonDict]) -> List[lit_model.JsonDict]:
     pass
 
 
@@ -109,7 +109,7 @@ class TestRegressionModel(lit_model.Model):
     return ([], np.ndarray([]))
 
   def predict_minibatch(
-      self, inputs: list[lit_model.JsonDict]) -> list[lit_model.JsonDict]:
+      self, inputs: List[lit_model.JsonDict]) -> List[lit_model.JsonDict]:
     pass
 
 
@@ -226,7 +226,7 @@ class HotflipTest(parameterized.TestCase):
        'input_embs_sentence1'),
   )
   def test_find_fields(self, model: lit_model.Model, to_find: lit_types.LitType,
-                       expected_fields: list[str], align_field: Optional[str]):
+                       expected_fields: List[str], align_field: Optional[str]):
     found = self.hotflip.find_fields(model.output_spec(), to_find, align_field)
     self.assertEqual(found, expected_fields)
 

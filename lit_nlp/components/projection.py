@@ -36,7 +36,7 @@ projections).
 import abc
 import copy
 import threading
-from typing import Any, Dict, Hashable, Iterable, Optional, Sequence
+from typing import Any, Dict, Hashable, Iterable, List, Optional, Sequence
 
 from absl import logging
 
@@ -57,10 +57,10 @@ class ProjectorModel(lit_model.Model, metaclass=abc.ABCMeta):
   ##
   # Training methods
   @abc.abstractmethod
-  def fit_transform(self, inputs: Iterable[JsonDict]) -> list[JsonDict]:
+  def fit_transform(self, inputs: Iterable[JsonDict]) -> List[JsonDict]:
     return
 
-  def fit_transform_with_metadata(self, indexed_inputs) -> list[JsonDict]:
+  def fit_transform_with_metadata(self, indexed_inputs) -> List[JsonDict]:
     return self.fit_transform((i["data"] for i in indexed_inputs))
 
   ##
@@ -75,7 +75,7 @@ class ProjectorModel(lit_model.Model, metaclass=abc.ABCMeta):
 
   @abc.abstractmethod
   def predict_minibatch(self, inputs: Iterable[JsonDict],
-                        **unused_kw) -> list[JsonDict]:
+                        **unused_kw) -> List[JsonDict]:
     return
 
   def max_minibatch_size(self, **unused_kw):
@@ -87,7 +87,7 @@ class ProjectionInterpreter(lit_components.Interpreter):
 
   def __init__(self, model: lit_model.Model,
                indexed_inputs: Sequence[IndexedInput],
-               model_outputs: Optional[list[JsonDict]],
+               model_outputs: Optional[List[JsonDict]],
                projector: ProjectorModel, field_name: str, name: str):
     self._projector = caching.CachingModelWrapper(projector, name=name)
     self._field_name = field_name
@@ -110,7 +110,7 @@ class ProjectionInterpreter(lit_components.Interpreter):
   def _run(self,
            model: lit_model.Model,
            indexed_inputs: Sequence[IndexedInput],
-           model_outputs: Optional[list[JsonDict]] = None,
+           model_outputs: Optional[List[JsonDict]] = None,
            do_fit=False):
     # Run model, if needed.
     if model_outputs is None:
@@ -130,7 +130,7 @@ class ProjectionInterpreter(lit_components.Interpreter):
                         indexed_inputs: Sequence[IndexedInput],
                         model: lit_model.Model,
                         dataset: lit_dataset.Dataset,
-                        model_outputs: Optional[list[JsonDict]] = None,
+                        model_outputs: Optional[List[JsonDict]] = None,
                         config: Optional[Dict[str, Any]] = None):
     # If using input values, then treat inputs as outputs instead of running
     # the model.
@@ -213,7 +213,7 @@ class ProjectionManager(lit_components.Interpreter):
                          indexed_inputs: Sequence[IndexedInput],
                          model: lit_model.Model,
                          dataset: lit_dataset.IndexedDataset,
-                         model_outputs: Optional[list[JsonDict]] = None,
+                         model_outputs: Optional[List[JsonDict]] = None,
                          config: Optional[Dict[str, Any]] = None):
     instance_key = _key_from_dict(config)
     logging.info("Projection request: instance key: %s", instance_key)

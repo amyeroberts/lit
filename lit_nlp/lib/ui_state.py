@@ -17,7 +17,7 @@
 This is a stateful component, intended for use in notebook/Colab contexts
 to sync the UI selection state back to Python for further analysis.
 """
-from typing import Optional
+from typing import List, Optional
 
 import attr
 from lit_nlp.api import dataset as lit_dataset
@@ -34,7 +34,7 @@ class UIState(object):
   dataset: Optional[lit_dataset.IndexedDataset] = None
 
   primary: Optional[IndexedInput] = None
-  selection: list[IndexedInput] = attr.Factory(list)
+  selection: List[IndexedInput] = attr.Factory(list)
   pinned: Optional[IndexedInput] = None
 
 
@@ -54,7 +54,7 @@ class UIStateTracker(object):
     return self._state
 
   def update_state(self,
-                   indexed_inputs: list[types.IndexedInput],
+                   indexed_inputs: List[types.IndexedInput],
                    dataset: lit_dataset.IndexedDataset,
                    dataset_name: str,
                    primary_id: Optional[str] = None,
