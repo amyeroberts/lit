@@ -13,7 +13,7 @@
 # limitations under the License.
 # ==============================================================================
 """Helpers for getting default values for LitApp configurations."""
-from typing import Union
+from typing import Dict, Union
 from lit_nlp.api import components as lit_components
 from lit_nlp.api import model as lit_model
 from lit_nlp.components import ablation_flip
@@ -44,7 +44,7 @@ Interpreter = lit_components.Interpreter
 Model = lit_model.Model
 
 
-def default_generators() -> dict[str, Generator]:
+def default_generators() -> Dict[str, Generator]:
   """Returns a dict of the default generators used in a LitApp."""
   return {
       'Ablation Flip': ablation_flip.AblationFlip(),
@@ -54,7 +54,7 @@ def default_generators() -> dict[str, Generator]:
   }
 
 
-def default_interpreters(models: dict[str, Model]) -> dict[str, Interpreter]:
+def default_interpreters(models: Dict[str, Model]) -> Dict[str, Interpreter]:
   """Returns a dict of the default interpreters (and metrics) used in a LitApp.
 
   Args:
@@ -62,26 +62,26 @@ def default_interpreters(models: dict[str, Model]) -> dict[str, Interpreter]:
       thier own salience information.
   """
   # Ensure the embedding-based interpreters are included.
-  embedding_based_interpreters: dict[str, Interpreter] = {
+  embedding_based_interpreters: Dict[str, Interpreter] = {
       'nearest neighbors': nearest_neighbors.NearestNeighbors(),
       # Embedding projectors expose a standard interface, but get special
       # handling so we can precompute the projections if requested.
       'pca': projection.ProjectionManager(pca.PCAModel),
       'umap': projection.ProjectionManager(umap.UmapModel),
   }
-  gradient_map_interpreters: dict[str, Interpreter] = {
+  gradient_map_interpreters: Dict[str, Interpreter] = {
       'Grad L2 Norm': gradient_maps.GradientNorm(),
       'Grad ⋅ Input': gradient_maps.GradientDotInput(),
       'Integrated Gradients': gradient_maps.IntegratedGradients(),
       'LIME': lime_explainer.LIME(),
   }
   # Ensure the prediction analysis interpreters are included.
-  prediction_analysis_interpreters: dict[str, Interpreter] = {
+  prediction_analysis_interpreters: Dict[str, Interpreter] = {
       'classification': classification_results.ClassificationInterpreter(),
       'regression': regression_results.RegressionInterpreter(),
   }
   # pyformat: disable
-  interpreters: dict[str, Union[ComponentGroup, Interpreter]] = {
+  interpreters: Dict[str, Union[ComponentGroup, Interpreter]] = {
       'Model-provided salience': model_salience.ModelSalience(models),
       'counterfactual explainer': lemon_explainer.LEMON(),
       'tcav': tcav.TCAV(),

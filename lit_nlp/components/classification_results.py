@@ -15,7 +15,7 @@
 """An interpreter for analyzing classification results."""
 
 import numbers
-from typing import cast, Optional, Sequence
+from typing import cast, Dict, Optional, Sequence
 
 from lit_nlp.api import components as lit_components
 from lit_nlp.api import dataset as lit_dataset
@@ -101,14 +101,14 @@ class ClassificationInterpreter(lit_components.Interpreter):
     output_spec = model.output_spec()
     supported_keys = self._find_supported_pred_keys(output_spec)
 
-    results: list[dict[str, dtypes.ClassificationResult]] = []
+    results: list[Dict[str, dtypes.ClassificationResult]] = []
 
     # Run prediction if needed:
     if model_outputs is None:
       model_outputs = list(model.predict(inputs))
 
     for i, inp in enumerate(inputs):
-      input_result: dict[str, dtypes.ClassificationResult] = {}
+      input_result: Dict[str, dtypes.ClassificationResult] = {}
       for key in supported_keys:
 
         margin = get_margin_for_input(

@@ -14,7 +14,7 @@
 # ==============================================================================
 """An interpreter for analyzing regression results."""
 
-from typing import cast, Optional
+from typing import cast, Dict, Optional
 
 from lit_nlp.api import components as lit_components
 from lit_nlp.api import dataset as lit_dataset
@@ -43,14 +43,14 @@ class RegressionInterpreter(lit_components.Interpreter):
     output_spec = model.output_spec()
     supported_keys = self._find_supported_pred_keys(output_spec)
 
-    results: list[dict[str, dtypes.RegressionResult]] = []
+    results: list[Dict[str, dtypes.RegressionResult]] = []
 
     # Run prediction if needed:
     if model_outputs is None:
       model_outputs = list(model.predict(inputs))
 
     for i, inp in enumerate(inputs):
-      input_result: dict[str, dtypes.RegressionResult] = {}
+      input_result: Dict[str, dtypes.RegressionResult] = {}
       for key in supported_keys:
         field_spec = cast(types.RegressionScore, output_spec[key])
         score = model_outputs[i][key]

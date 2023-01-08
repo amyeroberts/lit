@@ -21,7 +21,7 @@ import os
 import random
 import threading
 import time
-from typing import Optional, Mapping, Sequence, Union, Callable, Iterable
+from typing import Dict, Optional, Mapping, Sequence, Union, Callable, Iterable
 
 from absl import logging
 
@@ -239,7 +239,7 @@ class LitApp(object):
 
   def _post_new_data(
       self, data, dataset_name: Optional[str] = None,
-      **unused_kw) -> dict[str, str]:
+      **unused_kw) -> Dict[str, str]:
     """Save datapoints provided, after annotatation, for later retrieval.
 
     Args:
@@ -556,7 +556,7 @@ class LitApp(object):
         for name, model in models.items()
     }
 
-    self._datasets: dict[str, lit_dataset.Dataset] = dict(datasets)
+    self._datasets: Dict[str, lit_dataset.Dataset] = dict(datasets)
     # TODO(b/202210900): get rid of this, just dynamically create the empty
     # dataset on the frontend.
     self._datasets['_union_empty'] = lit_dataset.NoneDataset(self._models)

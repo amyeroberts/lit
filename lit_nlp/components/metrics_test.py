@@ -14,7 +14,7 @@
 # ==============================================================================
 """Tests for lit_nlp.components.metrics."""
 
-from typing import Optional, Union
+from typing import Dict, Optional, Union
 from absl.testing import absltest
 from absl.testing import parameterized
 from lit_nlp.api import dataset as lit_dataset
@@ -668,7 +668,7 @@ class ExactMatchTest(parameterized.TestCase):
                                      types.TextSegment],
                    preds_spec: Union[types.GeneratedText,
                                      types.GeneratedTextCandidates],
-                   expected: dict[str, float]):
+                   expected: Dict[str, float]):
     result = self.metrics.compute(labels, preds, label_spec, preds_spec)
     testing_utils.assert_deep_almost_equal(self, result, expected)
 

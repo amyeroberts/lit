@@ -1,5 +1,5 @@
 """Interpreter components for seq2seq salience."""
-from typing import Optional
+from typing import Dict, Optional
 
 import Levenshtein  # TEMPORARY; for dummy salience
 from lit_nlp.api import components
@@ -18,7 +18,7 @@ _SUPPORTED_OUTPUTS = (types.GeneratedText, types.GeneratedTextCandidates)
 class DummySequenceSalience(components.Interpreter):
   """Dummy-valued seq2seq salience, for testing."""
 
-  def find_fields(self, model: lit_model.Model) -> dict[str, list[str]]:
+  def find_fields(self, model: lit_model.Model) -> Dict[str, list[str]]:
     src_fields = utils.find_spec_keys(model.input_spec(), types.TextSegment)
     gen_fields = utils.find_spec_keys(model.output_spec(), _SUPPORTED_OUTPUTS)
     return {f: src_fields for f in gen_fields}
@@ -35,8 +35,8 @@ class DummySequenceSalience(components.Interpreter):
 
   def _run_single(
       self, ex: JsonDict, mo: JsonDict,
-      field_map: dict[str, str]) -> dict[str, dtypes.SequenceSalienceMap]:
-    result = {}  # dict[target_field name -> interpretations]
+      field_map: Dict[str, str]) -> Dict[str, dtypes.SequenceSalienceMap]:
+    result = {}  # Dict[target_field name -> interpretations]
     for (target_field, source_fields) in field_map.items():
       source_tokens = []
       for sf in source_fields:

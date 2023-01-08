@@ -16,7 +16,7 @@
 
 import copy
 import re
-from typing import Iterator, Optional, Pattern
+from typing import Dict, Iterator, Optional, Pattern
 
 from absl import logging
 
@@ -39,7 +39,7 @@ class WordReplacer(lit_components.Generator):
   Substitutions must be of the form 'foo -> bar, spam -> eggs'.
   """
 
-  def __init__(self, replacements: Optional[dict[str, list[str]]] = None):
+  def __init__(self, replacements: Optional[Dict[str, list[str]]] = None):
     # Populate dictionary with replacement options.
     if replacements is not None:
       assert isinstance(replacements, dict), 'Replacements must be a dict.'
@@ -50,7 +50,7 @@ class WordReplacer(lit_components.Generator):
       self.default_replacements = {}
 
   def parse_subs_string(self, subs_string: str,
-                        ignore_casing: bool = True) -> dict[str, list[str]]:
+                        ignore_casing: bool = True) -> Dict[str, list[str]]:
     """Parse a substitutions list of the form 'foo -> bar, spam -> eggs' ."""
     replacements = {}
     # TODO(lit-dev) Use pyparsing if the pattern gets more complicated.
@@ -68,7 +68,7 @@ class WordReplacer(lit_components.Generator):
     return replacements
 
   def _get_replacement_pattern(self,
-                               replacements: dict[str, list[str]],
+                               replacements: Dict[str, list[str]],
                                ignore_casing: bool = True) -> Pattern[str]:
     r"""Generate replacement pattern for whole word match.
 
@@ -111,7 +111,7 @@ class WordReplacer(lit_components.Generator):
   def generate_counterfactuals(
       self, text: str,
       replacement_regex: Pattern[str],
-      replacements: dict[str, list[str]],
+      replacements: Dict[str, list[str]],
       ignore_casing: bool = True) -> Iterator[str]:
     """Replace each token and yield a new string each time that succeeds.
 

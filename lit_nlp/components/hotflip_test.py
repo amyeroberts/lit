@@ -14,7 +14,7 @@
 # ==============================================================================
 """Tests for lit_nlp.components.hotflip."""
 
-from typing import Optional
+from typing import Dict, Optional
 
 from absl.testing import absltest
 from absl.testing import parameterized
@@ -28,7 +28,7 @@ import numpy as np
 
 class TestClassificationModel(lit_model.Model):
 
-  def input_spec(self) -> dict[str, lit_types.LitType]:
+  def input_spec(self) -> Dict[str, lit_types.LitType]:
     return {
         'sentence':
             lit_types.TextSegment(),
@@ -38,7 +38,7 @@ class TestClassificationModel(lit_model.Model):
             lit_types.TokenEmbeddings(align='tokens_sentence', required=False),
     }
 
-  def output_spec(self) -> dict[str, lit_types.LitType]:
+  def output_spec(self) -> Dict[str, lit_types.LitType]:
     return {
         'probas':
             lit_types.MulticlassPreds(vocab=[]),
@@ -65,7 +65,7 @@ class TestClassificationModel(lit_model.Model):
 
 class TestRegressionModel(lit_model.Model):
 
-  def input_spec(self) -> dict[str, lit_types.LitType]:
+  def input_spec(self) -> Dict[str, lit_types.LitType]:
     return {
         'sentence1':
             lit_types.TextSegment(),
@@ -81,7 +81,7 @@ class TestRegressionModel(lit_model.Model):
             lit_types.TokenEmbeddings(align='tokens_sentence2', required=False),
     }
 
-  def output_spec(self) -> dict[str, lit_types.LitType]:
+  def output_spec(self) -> Dict[str, lit_types.LitType]:
     return {
         'score':
             lit_types.RegressionScore(),

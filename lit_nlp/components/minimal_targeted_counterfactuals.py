@@ -62,7 +62,7 @@ References:
 """
 
 import collections
-from typing import Any, cast, Optional
+from typing import Any, cast, Dict, Optional
 from absl import logging
 
 from lit_nlp.api import components as lit_components
@@ -119,7 +119,7 @@ class TabularMTC(lit_components.Generator):
   # The nested dictionary key is the name of the example field. The value is
   # either the corresponding standard deviation for a scalar feature or the
   # probability for a categorical feature.
-  _datasets_stats: dict[str, dict[str, float]] = {}
+  _datasets_stats: Dict[str, Dict[str, float]] = {}
 
   def is_compatible(self, model: lit_model.Model,
                     dataset: lit_dataset.Dataset) -> bool:

@@ -36,7 +36,7 @@ projections).
 import abc
 import copy
 import threading
-from typing import Any, Hashable, Iterable, Optional, Sequence
+from typing import Any, Dict, Hashable, Iterable, Optional, Sequence
 
 from absl import logging
 
@@ -131,7 +131,7 @@ class ProjectionInterpreter(lit_components.Interpreter):
                         model: lit_model.Model,
                         dataset: lit_dataset.Dataset,
                         model_outputs: Optional[list[JsonDict]] = None,
-                        config: Optional[dict[str, Any]] = None):
+                        config: Optional[Dict[str, Any]] = None):
     # If using input values, then treat inputs as outputs instead of running
     # the model.
     del dataset  # unused - pass examples to constructor instead
@@ -214,7 +214,7 @@ class ProjectionManager(lit_components.Interpreter):
                          model: lit_model.Model,
                          dataset: lit_dataset.IndexedDataset,
                          model_outputs: Optional[list[JsonDict]] = None,
-                         config: Optional[dict[str, Any]] = None):
+                         config: Optional[Dict[str, Any]] = None):
     instance_key = _key_from_dict(config)
     logging.info("Projection request: instance key: %s", instance_key)
     # Fit a new instance if necessary

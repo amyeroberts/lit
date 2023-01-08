@@ -19,7 +19,7 @@ import hashlib
 import os
 import pickle
 import threading
-from typing import Any, Callable, Iterable, Optional, Union
+from typing import Any, Callable, Dict, Iterable, Optional, Union
 
 from absl import logging
 
@@ -58,11 +58,11 @@ class PickleCacheLoader(object):
   def __init__(self, name: str, cache_dir: str):
     self._cache_path = os.path.join(cache_dir, name + ".cache.pkl")
 
-  def save(self, data: dict[CacheKey, Any]):
+  def save(self, data: Dict[CacheKey, Any]):
     with open(self._cache_path, "wb") as fd:
       pickle.dump(data, fd)
 
-  def load(self) -> dict[CacheKey, Any]:
+  def load(self) -> Dict[CacheKey, Any]:
     """Load data from pickle file."""
     try:
       with open(self._cache_path, "rb") as fd:
@@ -89,7 +89,7 @@ class PredsCache(object):
     # TODO(lit-team): consider using a read/write lock, or setting timeouts if
     # contention becomes an issue.
     self._lock = threading.RLock()
-    self._d: dict[CacheKey, Any] = dict()
+    self._d: Dict[CacheKey, Any] = dict()
     self._num_persisted = 0
     self._allow_concurrent_predictions = allow_concurrent_predictions
 
@@ -100,7 +100,7 @@ class PredsCache(object):
 
     # A map of keys needing predictions to a lock for that model predict call.
     # Used for not duplicating concurrent prediction calls on the same inputs.
-    self._pred_locks: dict[frozenset[CacheKey], threading.RLock] = dict()
+    self._pred_locks: Dict[frozenset[CacheKey], threading.RLock] = dict()
 
   @property
   def lock(self):

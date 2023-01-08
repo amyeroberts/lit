@@ -15,7 +15,7 @@
 """Base classes for LIT backend components."""
 import abc
 import inspect
-from typing import Any, Optional, Sequence
+from typing import Any, Dict, Optional, Sequence
 
 from lit_nlp.api import dataset as lit_dataset
 from lit_nlp.api import model as lit_model
@@ -23,7 +23,7 @@ from lit_nlp.api import types
 
 JsonDict = types.JsonDict
 IndexedInput = types.IndexedInput
-MetricsDict = dict[str, float]
+MetricsDict = Dict[str, float]
 
 
 class Interpreter(metaclass=abc.ABCMeta):
@@ -96,7 +96,7 @@ class Interpreter(metaclass=abc.ABCMeta):
 class ComponentGroup(Interpreter):
   """Convenience class to package a group of components together."""
 
-  def __init__(self, subcomponents: dict[str, Interpreter]):
+  def __init__(self, subcomponents: Dict[str, Interpreter]):
     self._subcomponents = subcomponents
 
   def meta_spec(self) -> types.Spec:
@@ -112,7 +112,7 @@ class ComponentGroup(Interpreter):
       model: lit_model.Model,
       dataset: lit_dataset.IndexedDataset,
       model_outputs: Optional[list[JsonDict]] = None,
-      config: Optional[JsonDict] = None) -> dict[str, JsonDict]:
+      config: Optional[JsonDict] = None) -> Dict[str, JsonDict]:
     """Run this component, given a model and input(s)."""
     if model_outputs is None:
       raise ValueError('model_outputs cannot be None')

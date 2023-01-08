@@ -14,7 +14,7 @@
 # ==============================================================================
 """SHAP explanations for datasets and models."""
 
-from typing import Optional, Union
+from typing import Dict, Optional, Union
 
 from lit_nlp.api import components as lit_components
 from lit_nlp.api import dataset as lit_dataset
@@ -101,7 +101,7 @@ class TabularShapExplainer(lit_components.Interpreter):
       dataset: lit_dataset.Dataset,
       model_outputs: Optional[list[JsonDict]] = None,
       config: Optional[JsonDict] = None
-  ) -> Optional[list[dict[str, dtypes.FeatureSalience]]]:
+  ) -> Optional[list[Dict[str, dtypes.FeatureSalience]]]:
     """Generate SHAP explanations for model predictions given a set of inputs.
 
     Args:

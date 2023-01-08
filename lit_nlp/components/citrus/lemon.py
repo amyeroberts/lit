@@ -36,7 +36,7 @@ the requested output class.
 """
 import collections
 import functools
-from typing import Any, Callable, Iterable, Optional, Sequence
+from typing import Any, Callable, Dict, Iterable, Optional, Sequence
 
 from lit_nlp.components.citrus import helpers
 from lit_nlp.components.citrus import utils
@@ -49,7 +49,7 @@ DEFAULT_NUM_SAMPLES = 3000
 DEFAULT_SOLVER = 'lsqr'
 
 
-def make_vocab_dict(tokens: Sequence[str]) -> dict[str, Sequence[int]]:
+def make_vocab_dict(tokens: Sequence[str]) -> Dict[str, Sequence[int]]:
   """Creates a dictionary mapping words in the input sentence to their indices.
 
   Args:
@@ -68,7 +68,7 @@ def make_vocab_dict(tokens: Sequence[str]) -> dict[str, Sequence[int]]:
 
 
 def get_masks(counterfactuals: Sequence[Sequence[str]],
-              vocab_to_indices: dict[str, Sequence[int]]):
+              vocab_to_indices: Dict[str, Sequence[int]]):
   """Returns strings with the masked tokens replaced with `mask_token`.
 
   Args:
