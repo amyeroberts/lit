@@ -19,7 +19,7 @@ import hashlib
 import os
 import pickle
 import threading
-from typing import Any, Callable, Dict, Iterable, Optional, Union
+from typing import Any, Callable, Dict, Iterable, Optional, Tuple, Union
 
 from absl import logging
 
@@ -35,7 +35,7 @@ ProgressIndicator = Callable[[Iterable], Iterable]
 
 # Compound keys: (dataset_name, example_id)
 # None is used as a sentinel to skip the cache.
-CacheKey = Union[tuple[str, str], None]
+CacheKey = Union[Tuple[str, str], None]
 
 # The keys to the prediction locks are frozen sets of CacheKeys.
 PredLockKey = frozenset[CacheKey]

@@ -15,7 +15,7 @@
 """Metric component and implementations."""
 
 import collections
-from typing import Any, Dict, Callable, Optional, Sequence, Union, cast
+from typing import Any, Dict, Callable, Optional, Sequence, Tuple, Union, cast
 
 from absl import logging
 from lit_nlp.api import components as lit_components
@@ -469,7 +469,7 @@ class MulticlassPairedMetricsImpl(SimpleMetrics):
 
   @staticmethod
   def find_pairs(indices: Sequence[types.ExampleId],
-                 metas: Sequence[JsonDict]) -> list[tuple[int, int]]:
+                 metas: Sequence[JsonDict]) -> list[Tuple[int, int]]:
     """Find valid pairs in the current selection, and return list indices."""
     id_to_position = {example_id: i for i, example_id in enumerate(indices)}
     pairs = []  # (i,j) relative to labels and preds lists

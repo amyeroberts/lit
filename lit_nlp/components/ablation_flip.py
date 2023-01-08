@@ -31,7 +31,7 @@ This generator builds on ideas from the following paper.
 import collections
 import copy
 import itertools
-from typing import Iterator, Optional
+from typing import Iterator, Optional, Tuple
 
 from absl import logging
 from lit_nlp.api import components as lit_components
@@ -108,11 +108,11 @@ class AblationFlip(lit_components.Generator):
 
   def _gen_ablation_idxs(
       self,
-      loo_scores: list[tuple[str, int, float]],
+      loo_scores: list[Tuple[str, int, float]],
       max_ablations: int,
       orig_regression_score: Optional[float] = None,
       regression_thresh: Optional[float] = None
-  ) -> Iterator[tuple[tuple[str, int], ...]]:
+  ) -> Iterator[Tuple[Tuple[str, int], ...]]:
     """Generates sets of token positions that are eligible for ablation."""
 
     # Order tokens by their leave-one-out ablation scores. (Note that these
@@ -150,7 +150,7 @@ class AblationFlip(lit_components.Generator):
   def _create_cf(self,
                  example: JsonDict,
                  input_spec: Spec,
-                 ablation_idxs: list[tuple[str, int]]) -> JsonDict:
+                 ablation_idxs: list[Tuple[str, int]]) -> JsonDict:
     # Build a dictionary mapping input fields to the token idxs to be ablated
     # from that field.
     ablation_idxs_per_field = collections.defaultdict(list)
@@ -193,7 +193,7 @@ class AblationFlip(lit_components.Generator):
       orig_output: JsonDict,
       pred_key: str,
       fields_to_ablate: list[str],
-      tokens_to_ignore: list[str]) -> list[tuple[str, int, float]]:
+      tokens_to_ignore: list[str]) -> list[Tuple[str, int, float]]:
     # Returns a list of triples: field, token_idx and leave-one-out score.
     ret = []
     for field in input_spec.keys():

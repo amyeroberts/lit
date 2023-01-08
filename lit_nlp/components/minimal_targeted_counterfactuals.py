@@ -62,7 +62,7 @@ References:
 """
 
 import collections
-from typing import Any, cast, Dict, Optional
+from typing import Any, cast, Dict, Optional, Tuple
 from absl import logging
 
 from lit_nlp.api import components as lit_components
@@ -469,7 +469,7 @@ class TabularMTC(lit_components.Generator):
                cf_example: JsonDict,
                orig_output: JsonDict,
                pred_key: str,
-               regression_thresh: Optional[float] = None) -> tuple[bool, Any]:
+               regression_thresh: Optional[float] = None) -> Tuple[bool, Any]:
 
     cf_output = list(model.predict([cf_example]))[0]
     feature_predicted_value = cf_output[pred_key]
@@ -537,7 +537,7 @@ class TabularMTC(lit_components.Generator):
       dataset: lit_dataset.Dataset,
       dataset_name: str,
       model: Optional[lit_model.Model] = None,
-      field_names: Optional[list[str]] = None) -> tuple[float, list[str]]:
+      field_names: Optional[list[str]] = None) -> Tuple[float, list[str]]:
     """Calculates L1 distance between two input examples.
 
     Only categorical and scalar example features are considered. For categorical

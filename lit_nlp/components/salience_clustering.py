@@ -14,7 +14,7 @@
 # ==============================================================================
 """kmeans clustering of salience weights."""
 
-from typing import Dict, Optional, Sequence
+from typing import Dict, Optional, Sequence, Tuple
 
 from lit_nlp.api import components as lit_components
 from lit_nlp.api import dataset as lit_dataset
@@ -53,7 +53,7 @@ class SalienceClustering(lit_components.Interpreter):
 
   def _build_vocab(
       self,
-      token_saliencies: list[JsonDict]) -> tuple[Dict[str, int], list[str]]:
+      token_saliencies: list[JsonDict]) -> Tuple[Dict[str, int], list[str]]:
     """Build a vocabulary from the given token saliencies.
 
     This creates a mapping from word type to index in the vocabulary taken from

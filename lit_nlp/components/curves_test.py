@@ -29,12 +29,12 @@ from lit_nlp.lib import caching
 # Labels used in the test dataset.
 COLORS = ['red', 'green', 'blue']
 
-Curve = list[tuple[float, float]]
+Curve = list[Tuple[float, float]]
 Model = lit_model.Model
 
 
 class TestDataEntry(NamedTuple):
-  prediction: tuple[float, float, float]
+  prediction: Tuple[float, float, float]
   label: Text
 
 
